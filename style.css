@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css?family=Lancelot|Lato&display=swap');
+
+html {
+	height: 100%;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+
+	height: 100%;
+
+	margin: 0;
+
+	font-family: 'Lato', sans-serif;
+}
+
+header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	padding: 20px;
+
+	border-bottom: 1px solid #f0f0f0;
+	box-shadow: 0 5px 5px #f0f0f0;
+
+	font-family: 'Lancelot', cursive;
+	font-size: 25px;
+}
+
+header h1 {
+	margin: 0;
+
+	font-size: 35px;
+}
+
+header nav {
+	display: flex;
+}
+
+header nav div {
+	margin: 0 20px;
+
+	border-bottom: 1px solid transparent;
+
+	cursor: pointer;
+}
+
+header nav div:hover {
+	border-bottom: 1px solid black;
+}
+
+main h2 {
+	font-family: 'Lancelot', cursive;
+}
+
+main {
+	display: flex;
+	flex: 1;
+
+	padding: 20px 0;
+
+	width: 100%;
+	max-width: 1000px;
+
+	margin: 0 auto;
+}
+
+main aside {
+	text-align: center;
+	width: 16%;
+}
+
+main aside h2 {
+	margin: 5px;
+}
+
+main aside a {
+	color: #1da1f2;
+	text-decoration: none;
+}
+
+main aside a:hover {
+	color: #167dbc;
+	text-decoration: underline;
+}
+
+main section {
+	flex: 1;
+}
+
+main section article {
+	padding: 10px;
+
+	border: 1px solid #f0f0f0;
+	box-shadow: 0 0 5px #f0f0f0;
+	border-radius: 5px;
+}
+
+main section article + article {
+	margin-top: 15px;
+}
+
+main section article h2 {
+	margin: 5px 0;
+}
+
+main section article p {
+	margin: 0;
+}
