@@ -29,6 +29,12 @@ header {
 	font-size: 25px;
 }
 
+header #open_nav {
+	display: none;
+
+	cursor: pointer;
+}
+
 header h1 {
 	margin: 0;
 
@@ -44,12 +50,70 @@ header nav div {
 
 	border-bottom: 1px solid transparent;
 
-	cursor: pointer;
+	cursor: not-allowed;
 }
 
 header nav div:hover {
-	border-bottom: 1px solid black;
+	/* border-bottom: 1px solid black; */
 }
+
+@media only screen and (max-width: 850px) {
+	header #open_nav {
+		display: block;
+	}
+
+	header h1 {
+		margin: 0 auto;
+
+		text-align: center;
+
+		font-size: 30px;
+	}
+
+	header nav {
+		display: flex;
+		flex-direction: column;
+
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 2;
+
+		height: 100%;
+		width: 0;
+
+		background: white;
+
+		border-bottom: 1px solid #f0f0f0;
+		box-shadow: -5px 0 15px #555;
+
+		text-align: center;
+		overflow-x: hidden;
+		transition: width 0.5s;
+	}
+
+	body.nav_open header nav {
+		width: 200px;
+	}
+
+	body.nav_open #grey {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+
+		background-color: rgba(0, 0, 0, 0.3);
+
+		cursor: pointer;
+	}
+
+	header nav div {
+		margin: 20px auto;
+		white-space: nowrap;
+	}
+}
+
 
 main h2 {
 	font-family: 'Lancelot', cursive;
@@ -68,8 +132,16 @@ main {
 }
 
 main aside {
+	width: 160px;
+	margin: 0 10px;
+
 	text-align: center;
-	width: 16%;
+}
+
+@media only screen and (max-width: 850px) {
+	main aside {
+		display: none;
+	}
 }
 
 main aside h2 {
@@ -77,6 +149,10 @@ main aside h2 {
 }
 
 main aside a {
+	display: block;
+
+	margin: 5px 0;
+
 	color: #1da1f2;
 	text-decoration: none;
 }
@@ -88,6 +164,8 @@ main aside a:hover {
 
 main section {
 	flex: 1;
+
+	margin: 0 10px;
 }
 
 main section article {
@@ -119,6 +197,14 @@ footer {
 	padding: 20px 50px;
 
 	font-size: 12px;
+}
+
+footer p {
+	cursor: default;
+}
+
+footer p:hover #love {
+	color: red;
 }
 
 footer a {
