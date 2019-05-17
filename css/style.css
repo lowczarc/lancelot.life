@@ -109,3 +109,33 @@ main section article h2 {
 main section article p {
 	margin: 0;
 }
+
+footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	color: #ccc;
+
+	padding: 20px 50px;
+
+	font-size: 12px;
+}
+
+footer a {
+	margin: 0 5px;
+}
+
+footer .icon {
+	width: 30px;
+
+	fill: #ccc;
+	cursor: pointer;
+}
+
+footer .icon#twitter:hover {
+	fill: #1da1f2;
+}
+
+footer .icon#github:hover {
+	fill: black;
+}
