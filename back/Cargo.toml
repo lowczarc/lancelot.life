@@ -1,0 +1,10 @@
+[package]
+name = "back"
+version = "0.1.0"
+authors = ["Lancelot OWCZARCZAK <lowczarc@student.42.fr>"]
+edition = "2018"
+
+[dependencies]
+tokio = "0.1.20"
+tokio-io = "0.1.12"
+futures = "0.1.27"
