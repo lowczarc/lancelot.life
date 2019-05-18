@@ -51,6 +51,7 @@ impl Response {
 pub enum HttpStatus {
     OK = 200,
     BadRequest = 400,
+    Forbidden = 403,
     NotFound = 404,
     InternalServerError = 500,
     NotImplemented = 501,
@@ -61,6 +62,7 @@ impl HttpStatus {
     match self {
       HttpStatus::OK => "200 OK",
       HttpStatus::BadRequest => "400 Bad Request",
+      HttpStatus::Forbidden => "403 Forbidden",
       HttpStatus::NotFound => "404 Not Found",
       HttpStatus::InternalServerError => "500 Internal Server Error",
       HttpStatus::NotImplemented => "501 Not Implemented",
