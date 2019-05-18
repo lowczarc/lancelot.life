@@ -11,7 +11,7 @@ use response::Response;
 use router::router;
 
 fn main() {
-    let listener = TcpListener::bind("127.0.0.1:5432").unwrap();
+    let listener = TcpListener::bind("0.0.0.0:5432").unwrap();
     
     loop {
         let stream = listener.accept().unwrap().0;
