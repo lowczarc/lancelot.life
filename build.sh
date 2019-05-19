@@ -1,6 +1,6 @@
 #!/bin/sh
 function build() {
-  if cargo build --release
+  if ~/.cargo/bin/cargo build --release
   then
     mkdir -p build
     rm -rf build/*
