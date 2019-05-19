@@ -47,4 +47,3 @@ fn read_request(stream: TcpStream) {
 
     send_response(reader.into_inner(), &res.send());
 }
-
