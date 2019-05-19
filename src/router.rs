@@ -1,5 +1,8 @@
 use std::fs;
 use std::path::Path;
+use lazy_static::lazy_static;
+
+pub use regex::Regex;
 
 use crate::{
   response::Response,
@@ -7,9 +10,30 @@ use crate::{
   request::Request
 };
 
+mod articles;
+
+pub type RouteFn = fn(Request) -> Response;
+pub type Route = (Regex, RouteFn);
+
+lazy_static! {
+  static ref ROUTES: Vec<&'static Route> = {
+    let mut routes: Vec<&Route> = Vec::new();
+    // routes.push(&articles::ARTICLES);
+    routes
+  };
+}
+
 pub fn router(req: Request) -> Response {
+  if let Some(key) = ROUTES.iter().position(|(regex, _route)| { regex.is_match(&req.location) }) {
+    ROUTES[key].1(req)
+  } else {
+    router_static("static", req)
+  }
+}
+
+fn router_static(static_dir: &str, req: Request) -> Response {
   let mut res = Response::new();
-  let mut current_path = Path::new(&format!("./static/{}", req.location)).canonicalize();
+  let mut current_path = Path::new(&format!("./{}/{}", static_dir, req.location)).canonicalize();
 
   if current_path.is_ok() {
     let path = current_path.unwrap();

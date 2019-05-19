@@ -5,3 +5,5 @@ authors = ["Lancelot OWCZARCZAK <lowczarc@student.42.fr>"]
 edition = "2018"
 
 [dependencies]
+regex = "1.1.6"
+lazy_static = "1.3.0"
