@@ -6,12 +6,13 @@ use crate::{
 };
 
 lazy_static! {
-    pub static ref ARTICLES: Route = (Regex::new(r"/blable/.*").unwrap(), super_route);
+    pub static ref ARTICLES: Route = (Regex::new(r"/blabla/.*").unwrap(), super_route);
 }
 
-pub fn super_route(req: Request) -> Response {
+pub fn super_route(_req: Request) -> Response {
   let mut res = Response::new();
 
-  res.body("test".to_string());
+  res.header("Content-Type".into(), "text/plain".into());
+  res.body(":)".into());
   res
 }
