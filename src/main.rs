@@ -21,8 +21,8 @@ fn main() {
     }
 }
 
-fn send_response(mut stream: TcpStream, response: &str) {
-    stream.write_all(response.as_bytes()).unwrap();
+fn send_response(mut stream: TcpStream, response: &[u8]) {
+    stream.write_all(response).unwrap();
 }
 
 fn read_request(stream: TcpStream) {

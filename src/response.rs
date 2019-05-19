@@ -5,7 +5,7 @@ pub struct Response {
     status: HttpStatus,
     version: String,
     headers: HashMap<String, String>,
-    body: String,
+    body: Vec<u8>,
 }
 
 impl Response {
@@ -17,7 +17,7 @@ impl Response {
       status: HttpStatus::OK,
       version: "HTTP/1.1".to_string(),
       headers,
-      body: String::new(),
+      body: Vec::new(),
     }
   }
 
@@ -30,20 +30,26 @@ impl Response {
   }
 
   pub fn body(&mut self, body: String) {
+    self.body = body.into_bytes();
+    self.header("Content-length".to_string(), self.body.len().to_string());
+  }
+
+  pub fn raw_body(&mut self, body: Vec<u8>) {
     self.body = body;
     self.header("Content-length".to_string(), self.body.len().to_string());
   }
 
-  pub fn send(&self) -> String {
-    format!(
-      "{} {}\n{}\n\n{}",
+  pub fn send(mut self) -> Vec<u8> {
+    let mut res = format!(
+      "{} {}\n{}\n\n",
       self.version,
       self.status.send(),
       self.headers.iter().map(|(key, value)| {
         format!("{}: {}", key, value)
       }).collect::<Vec<String>>().join("\n"),
-      self.body,
-    )
+    ).into_bytes();
+    res.append(&mut self.body);
+    res
   }
 }
 

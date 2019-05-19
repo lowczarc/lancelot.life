@@ -6,6 +6,7 @@ function build() {
     rm -rf build/*
     cp target/release/lancelot_life build/server
     cp -r static build/
+    echo "Build success !"
   else
     echo "build.sh: Build Failed with code $?"
     exit 1

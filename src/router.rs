@@ -1,4 +1,4 @@
-use std::fs::read_to_string;
+use std::fs;
 use std::path::Path;
 
 use crate::{
@@ -25,8 +25,10 @@ pub fn router(req: Request) -> Response {
       if path.starts_with(Path::new("./static").canonicalize().unwrap()) {
         let content_type = if let Some(extension) = path.extension() {
           match extension.to_str().unwrap() {
-            "html" => "text/html; charset=utf-8",
+            "html" | "htm" => "text/html; charset=utf-8",
             "css" => "text/css",
+            "jpg" | "jpeg "=> "image/jpeg",
+            "png" => "image/png",
             _ => ""
           }
         } else {
@@ -35,7 +37,7 @@ pub fn router(req: Request) -> Response {
         if content_type != "" {
           res.header("Content-type".to_string(), content_type.to_string());
         }
-        res.body(read_to_string(path).unwrap());
+        res.raw_body(fs::read(path).expect("Failed to read string"));
       } else {
         res.status(HttpStatus::Forbidden);
         res.header("Content-type".to_string(), "text/html".to_string());
