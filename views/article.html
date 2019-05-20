@@ -5,14 +5,9 @@
 	</head>
 	<body>
 		<p>Your query: {query}<br/>:)</p>
-		{Articles |article| [
+		{titres |titre| [
 			<div>
-				<h1>{article.title}</h1>
-				<p>{article.content}</p>
-				<ul>
-					{article.related |related| [
-						<li><a href="{related.link}">{related.title}</a></li>
-					]}
+				{titre}
 			</div>
 		]}
 	</body>
