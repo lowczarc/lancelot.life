@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Lancelot Owczarczak - {Title}</title>
+	</head>
+	<body>
+		{Articles |article| [
+			<div>
+				<h1>{article.title}</h1>
+				<p>{article.content}</p>
+				<ul>
+					{article.related |related| [
+						<li><a href="{related.link}">{related.title}</a></li>
+					]}
+			</div>
+		]}
+	</body>
+</html>

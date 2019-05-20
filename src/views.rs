@@ -1,15 +1,13 @@
-enum HtmlValue {
+pub mod article;
+
+#[derive(Debug)]
+pub enum HtmlValue {
     Litteral(&'static str),
     Value(ViewContent),
 }
 
-use HtmlValue::*;
-
-enum ViewContent {
+#[derive(Debug)]
+pub enum ViewContent {
     Array(&'static str, &'static str, &'static [HtmlValue]),
     Content(&'static str),
 }
-
-use ViewContent::*;
-
-pub const HTMLDOC: &[HtmlValue] = 
