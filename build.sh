@@ -1,6 +1,5 @@
 #!/bin/sh
 function build() {
-  sh view_to_in.sh
   if ~/.cargo/bin/cargo build --release
   then
     mkdir -p build
