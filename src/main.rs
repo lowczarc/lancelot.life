@@ -1,7 +1,8 @@
 mod request;
 mod response;
-mod router;
+#[macro_use]
 mod views;
+mod router;
 
 use std::io::{Write, BufReader};
 use std::net::{TcpListener, TcpStream};

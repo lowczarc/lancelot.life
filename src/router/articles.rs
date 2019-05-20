@@ -2,9 +2,12 @@ use crate::{
     request::Request,
     response::Response,
     router::{Regex, Route},
-    views::article::HTML_STRUCTURE,
+    views::HtmlView,
 };
+
 use lazy_static::lazy_static;
+
+const HTML_STRUCTURE: HtmlView = import_view!("views/article.html");
 
 lazy_static! {
     pub static ref ARTICLES: Route = (Regex::new(r"/blabla/.*").unwrap(), super_route);
