@@ -12,8 +12,11 @@ use request::Request;
 use response::Response;
 use router::router;
 
+const IP_LISTENER: &str = "0.0.0.0";
+const PORT_LISTENER: &str = "5432";
+
 fn main() {
-    let listener = TcpListener::bind("0.0.0.0:5432").unwrap();
+    let listener = TcpListener::bind(&format!("{}:{}", IP_LISTENER, PORT_LISTENER)).unwrap();
     
     loop {
         let stream = listener.accept().unwrap().0;

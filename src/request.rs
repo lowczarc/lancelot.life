@@ -27,7 +27,7 @@ impl Request {
                 return Err(HttpStatus::BadRequest);
             }
 
-            // get method if implemented
+            // Get method if implemented
             let method = if let Ok(method) = HttpMethod::from_str(http_request_vec[0]) {
                 method
             } else {
