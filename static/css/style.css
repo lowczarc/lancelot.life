@@ -50,11 +50,20 @@ header nav div {
 
 	border-bottom: 1px solid transparent;
 
+	cursor: pointer;
+}
+
+header nav div a {
+	color: black;
+	text-decoration: none;
+}
+
+header nav div.disabled {
 	cursor: not-allowed;
 }
 
-header nav div:hover {
-	/* border-bottom: 1px solid black; */
+header nav div:hover:not(.disabled) {
+	border-bottom: 1px solid black;
 }
 
 @media only screen and (max-width: 850px) {

@@ -10,6 +10,7 @@ use crate::{
   request::Request
 };
 
+pub mod common_struct;
 mod articles;
 
 pub type RouteFn = fn(Request) -> Response;

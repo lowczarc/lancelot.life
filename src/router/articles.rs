@@ -5,7 +5,7 @@ use lazy_static::lazy_static;
 use crate::{
     request::Request,
     response::Response,
-    router::{Regex, Route},
+    router::{Regex, Route, common_struct::HTML_COMMON_STRUCT},
     views::{HtmlView, ViewVar, render_view},
 };
 
@@ -18,21 +18,28 @@ lazy_static! {
 pub fn super_route(req: Request) -> Response {
     let mut res = Response::new();
     let mut vars: HashMap<String, &ViewVar> = HashMap::new();
-    
-    let title = ViewVar::Simple("Super titre".into());
-    vars.insert("title".into(), &title);
+    let mut article: Vec<ViewVar> = Vec::new();
 
-    let title1 = ViewVar::Simple("<h1>Super titre</h1>".into());
-    let title2 = ViewVar::Simple("<h2>Deuxieme titre</h2>".into());
-    let title3 = ViewVar::Simple("<h3>Troisième titre</h3>".into());
-    let title4 = ViewVar::Simple("<h4>Quatrième titre</h4>".into());
-    let titres = ViewVar::Array(vec![title1, title2, title3, title4]);
-    vars.insert("titres".into(), &titres);
+    add_to_view!(vars, article: {
+        content: "test",
+        title: "tata",
+        test: {
+            tutu: "tata",
+            tata: [
+                "machin"
+            ]
+        }
+    });
 
-    let query = ViewVar::Simple(req.query);
-    vars.insert("query".into(), &query);
+    //add_to_view!(vars, article, &test);
+
+    add_to_view!(vars, section: render_view(HTML_STRUCTURE, vars.clone())); 
+
+    add_to_view!(vars, title: "Lancelot Owczarczak");
+
+    println!("{:?}", vars);
 
     res.header("Content-Type".into(), "text/html; charset=utf8".into());
-    res.body(render_view(HTML_STRUCTURE, vars));
+    res.body(render_view(HTML_COMMON_STRUCT, vars));
     res
 }

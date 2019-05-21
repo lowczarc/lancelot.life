@@ -10,11 +10,58 @@ macro_rules! import_view {
   }}
 }
 
+macro_rules! add_to_view {
+    ($vars:ident, $id:tt: { $( $inid:tt: $invalue:tt ),* } ) => {
+        let mut tmp_object: HashMap<String, &ViewVar> = HashMap::new();
+        $( add_to_view!(tmp_object, $inid: $invalue); )*
+        add_to_view!($vars, $id: &tmp_object);
+    };
+
+    // Array can't contains arrays or other objects
+    ($vars:ident, $id:tt: [ $( $invalue:tt ),* ] ) => {
+        let mut tmp_vec: Vec<ViewVar> = Vec::new();
+        $(
+            let tmp_value: ViewVar = ViewVar::from($invalue);
+            tmp_vec.push(tmp_value);
+        )*
+        add_to_view!($vars, $id: tmp_vec);
+    };
+
+    ($vars:ident, $id:tt: $value:expr) => {
+        let tmp_simple: ViewVar = ViewVar::from($value);
+        $vars.insert(stringify!($id).into(), &tmp_simple);
+    };
+}
+
 #[derive(Debug)]
 pub enum ViewVar<'a> {
     Simple(String),
     Object(&'a HashMap<String, &'a ViewVar<'a>>),
     Array(Vec<ViewVar<'a>>)
+}
+
+impl<'a> From<String> for ViewVar<'a> {
+    fn from(simple: String) -> Self {
+        ViewVar::Simple(simple)
+    }
+}
+
+impl<'a> From<&str> for ViewVar<'a> {
+    fn from(simple: &str) -> Self {
+        ViewVar::Simple(simple.into())
+    }
+}
+
+impl<'a> From<&'a HashMap<String, &'a ViewVar<'a>>> for ViewVar<'a> {
+    fn from(object: &'a HashMap<String, &'a ViewVar<'a>>) -> Self {
+        ViewVar::Object(object)
+    }
+}
+
+impl<'a> From<Vec<ViewVar<'a>>> for ViewVar<'a> {
+    fn from(array: Vec<ViewVar<'a>>) -> Self {
+        ViewVar::Array(array)
+    }
 }
 
 impl<'a> ViewVar<'a> {
