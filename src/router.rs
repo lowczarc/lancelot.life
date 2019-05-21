@@ -19,11 +19,13 @@ lazy_static! {
   static ref ROUTES: Vec<&'static Route> = {
     let mut routes: Vec<&Route> = Vec::new();
     routes.push(&articles::ARTICLES);
+    // Add here all special routes
     routes
   };
 }
 
 pub fn router(req: Request) -> Response {
+  // Determine if it's a special route or static route
   if let Some(key) = ROUTES.iter().position(|(regex, _route)| { regex.is_match(&req.location) }) {
     ROUTES[key].1(req)
   } else {
@@ -35,8 +37,8 @@ fn router_static(static_dir: &str, req: Request) -> Response {
   let mut res = Response::new();
   let mut current_path = Path::new(&format!("./{}/{}", static_dir, req.location)).canonicalize();
 
-  if current_path.is_ok() {
-    let path = current_path.unwrap();
+  if let Ok(path) = current_path {
+    // if path is a dir, get the index.html
     if path.is_dir() {
       current_path = Path::new(&format!("{}/{}", path.to_str().unwrap(), "index.html")).canonicalize();
     } else {
@@ -46,22 +48,26 @@ fn router_static(static_dir: &str, req: Request) -> Response {
 
   match current_path {
     Ok(path) => {
+      // Verify Request is not "GET /../something HTTP/1.1"
       if path.starts_with(Path::new("./static").canonicalize().unwrap()) {
         let content_type = if let Some(extension) = path.extension() {
-          match extension.to_str().unwrap() {
-            "html" | "htm" => "text/html; charset=utf-8",
-            "css" => "text/css",
-            "jpg" | "jpeg "=> "image/jpeg",
-            "png" => "image/png",
+          match extension.to_str() {
+            Some("html") | Some("htm") => "text/html; charset=utf-8",
+            Some("css") => "text/css",
+            Some("jpg") | Some("jpeg") => "image/jpeg",
+            Some("png") => "image/png",
             _ => ""
           }
         } else {
           ""
         };
+
         if content_type != "" {
           res.header("Content-type".to_string(), content_type.to_string());
         }
-        res.raw_body(fs::read(path).expect("Failed to read string"));
+
+        res.raw_body(fs::read(path).expect("Failed to read static file"));
+
       } else {
         res.status(HttpStatus::Forbidden);
         res.header("Content-type".to_string(), "text/html".to_string());

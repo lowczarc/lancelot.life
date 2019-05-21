@@ -4,9 +4,10 @@ pub type HtmlView = &'static[HtmlValue];
 
 #[macro_export]
 macro_rules! import_view {
-  ($e:expr) => {
-    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $e, ".in"))
-  }
+  ($e:expr) => {{
+    use crate::views::{{HtmlValue::*, ViewContent::*}};
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $e, ".in")) // TODO: Remove include! and interprete views file at compile time
+  }}
 }
 
 #[derive(Debug)]
@@ -75,6 +76,7 @@ impl HtmlValue {
             HtmlValue::Value(ViewContent::Array(array, name, childrens)) => {
                 if let Some(ViewVar::Array(array)) = get_var_value(array, vars) {
                     let mut new_hash = vars.clone();
+
                     return Some(array.iter().map(|elem| {
                         new_hash.insert(name.to_string(), elem);
                         childrens.iter().map(|elem| if let Some(value) = elem.render(&new_hash) {

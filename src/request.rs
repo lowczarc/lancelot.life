@@ -6,6 +6,8 @@ use std::str::FromStr;
 
 use crate::response::HttpStatus;
 
+const MAX_BODY_LENGTH: u64 = 500000;
+
 #[derive(Debug)]
 pub struct Request {
     pub method: HttpMethod,
@@ -21,6 +23,29 @@ impl Request {
         if let Some(Ok(request)) = reader.lines().next() {
             let http_request_vec : Vec<&str> = request.split(' ').collect();
 
+            if http_request_vec.len() != 3 {
+                return Err(HttpStatus::BadRequest);
+            }
+
+            // get method if implemented
+            let method = if let Ok(method) = HttpMethod::from_str(http_request_vec[0]) {
+                method
+            } else {
+                return Err(HttpStatus::NotImplemented);
+            };
+
+            // Location is on the form of "/location?query"
+            let mut location_splitted = http_request_vec[1].split('?');
+            let location = if let Some(location) = location_splitted.next() {
+                    location.into()
+                } else {
+                    String::new()
+                };
+            let query = location_splitted.collect::<Vec<&str>>().join("?");
+
+            let version = http_request_vec[2].into();
+
+            // Read headers until blank line
             let mut headers: HashMap<String, String> = HashMap::new();
             for line in reader.by_ref().lines() {
                 let line_str = if let Ok(line) = line {
@@ -33,6 +58,7 @@ impl Request {
                     break;
                 }
 
+                // Headers are on the form of "Key: Value"
                 let line: Vec<&str> = line_str.split(':').collect();
                 if line.len() >= 2 {
                     headers.insert(line[0].trim().into(), line.into_iter().skip(1).collect::<Vec<&str>>().join(":").trim().into());
@@ -40,20 +66,19 @@ impl Request {
                     return Err(HttpStatus::BadRequest);
                 }
             }
-            let method = if let Ok(method) = HttpMethod::from_str(http_request_vec[0]) {
-                method
-            } else {
-                return Err(HttpStatus::NotImplemented);
-            };
-            let mut location_splitted = http_request_vec[1].split('?');
+
+            // Read a body of Content-Length bytes if Content-Length is defined and method is not GET
             let body = if let Some(content_length) = headers.get("Content-Length") {
                 if let Ok(length) = content_length.parse() {
-                    if length > 500000 || method == HttpMethod::GET {
+                    if length > MAX_BODY_LENGTH || method == HttpMethod::GET {
                         return Err(HttpStatus::BadRequest);
                     }
+
                     let mut body: Vec<u8> = Vec::new();
 
-                    reader.take(length).read_to_end(&mut body).expect("problem");
+                    if let Err(_) = reader.take(length).read_to_end(&mut body) {
+                        return Err(HttpStatus::BadRequest);
+                    }
                     body
                 } else {
                     Vec::new()
@@ -61,15 +86,12 @@ impl Request {
             } else {
                 Vec::new()
             };
+
             let http_request = Request {
                 method,
-                location: if let Some(location) = location_splitted.next() {
-                    location.into()
-                } else {
-                    String::new()
-                },
-                query: location_splitted.collect::<Vec<&str>>().join("?"),
-                version: http_request_vec[2].into(),
+                location,
+                query,
+                version,
                 headers,
                 body,
             };

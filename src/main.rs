@@ -30,21 +30,14 @@ fn send_response(mut stream: TcpStream, response: &[u8]) {
 fn read_request(stream: TcpStream) {
     let mut reader = BufReader::new(stream);
 
-    let req_reader = Request::read_request(&mut reader);
+    let res = match Request::read_request(&mut reader) {
+        Ok(req) => router(req),
+        Err(status) => {
+            let mut res = Response::new();
 
-    let res = if let Ok(req) = req_reader {
-        router(req)
-    } else {
-        let status = if let Err(status) = req_reader {
-            status
-        } else {
-            response::HttpStatus::InternalServerError
-        };
-
-        let mut res = Response::new();
-
-        res.status(status);
-        res
+            res.status(status);
+            res
+        }
     };
 
     send_response(reader.into_inner(), &res.send());
