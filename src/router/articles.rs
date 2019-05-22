@@ -18,20 +18,8 @@ lazy_static! {
 pub fn super_route(req: Request) -> Response {
     let mut res = Response::new();
     let mut vars: HashMap<String, &ViewVar> = HashMap::new();
-    let mut article: Vec<ViewVar> = Vec::new();
 
-    add_to_view!(vars, article: {
-        content: "test",
-        title: "tata",
-        test: {
-            tutu: "tata",
-            tata: [
-                "machin"
-            ]
-        }
-    });
-
-    //add_to_view!(vars, article, &test);
+    add_to_view!(vars, article: [ { bidule: "tata" }, [ "tatin", { machin: "truc" } ] ]);
 
     add_to_view!(vars, section: render_view(HTML_STRUCTURE, vars.clone())); 
 
