@@ -1,6 +1,8 @@
 use std::fs;
 use std::path::Path;
+use std::sync::Arc;
 use lazy_static::lazy_static;
+use mysql::Pool;
 
 pub use regex::Regex;
 
@@ -25,7 +27,7 @@ lazy_static! {
   };
 }
 
-pub fn router(req: Request) -> Response {
+pub fn router(req: Request, _db_pool: Arc<Pool>) -> Response {
   // Determine if it's a special route or static route
   if let Some(key) = ROUTES.iter().position(|(regex, _route)| { regex.is_match(&req.location) }) {
     ROUTES[key].1(req)

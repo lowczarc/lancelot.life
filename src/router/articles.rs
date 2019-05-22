@@ -12,10 +12,10 @@ use crate::{
 const HTML_STRUCTURE: HtmlView = import_view!("views/article.html");
 
 lazy_static! {
-    pub static ref ARTICLES: Route = (Regex::new(r"/blabla/.*").unwrap(), super_route);
+    pub static ref ARTICLES: Route = (Regex::new(r"/blabla/.*").unwrap(), article_route);
 }
 
-pub fn super_route(req: Request) -> Response {
+pub fn article_route(_req: Request) -> Response {
     let mut res = Response::new();
     let mut vars: HashMap<String, &ViewVar> = HashMap::new();
 
