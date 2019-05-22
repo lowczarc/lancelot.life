@@ -19,13 +19,20 @@ pub fn super_route(req: Request) -> Response {
     let mut res = Response::new();
     let mut vars: HashMap<String, &ViewVar> = HashMap::new();
 
-    add_to_view!(vars, article: [ { bidule: "tata" }, [ "tatin", { machin: "truc" } ] ]);
+    add_to_view!(vars, articles: [
+        {
+            title: "What did you expect",
+            content: "There isn't any article here yet"
+        },
+        {
+            title: "Another useless article",
+            content: "There isn't any article here yet"
+        }
+    ]);
 
     add_to_view!(vars, section: render_view(HTML_STRUCTURE, vars.clone())); 
 
     add_to_view!(vars, title: "Lancelot Owczarczak");
-
-    println!("{:?}", vars);
 
     res.header("Content-Type".into(), "text/html; charset=utf8".into());
     res.body(render_view(HTML_COMMON_STRUCT, vars));
