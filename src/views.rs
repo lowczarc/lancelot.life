@@ -10,12 +10,12 @@ macro_rules! import_view {
   }}
 }
 
-macro_rules! internal_add_to_view {
+macro_rules! add_to_view {
     (@assign $id:ident, { $( $inid:tt: $invalue:tt ),* }) => {
         let mut tmp_object: HashMap<String, &ViewVar> = HashMap::new();
         $(
             let mut tmp_value: ViewVar;
-            internal_add_to_view!(@assign tmp_value, $invalue);
+            add_to_view!(@assign tmp_value, $invalue);
             tmp_object.insert(stringify!($inid).into(), &tmp_value);
         )*
         $id = ViewVar::from(&tmp_object);
@@ -25,7 +25,7 @@ macro_rules! internal_add_to_view {
         let mut tmp_vec: Vec<ViewVar> = Vec::new();
         let mut tmp_value: ViewVar;
         $(
-            internal_add_to_view!(@assign tmp_value, $value);
+            add_to_view!(@assign tmp_value, $value);
             tmp_vec.push(tmp_value);
         )*
         $id = ViewVar::from(tmp_vec);
@@ -34,22 +34,22 @@ macro_rules! internal_add_to_view {
     (@assign $id:ident, $value:expr) => {
         $id = ViewVar::from($value);
     };
-}
 
-macro_rules! add_to_view {
     ($vars:ident, $id:tt: { $( $inid:tt: $value:tt ),* }) => {
         let mut tmp_value: ViewVar;
-        internal_add_to_view!(@assign tmp_value, { $( $inid: $value ),* });
+        add_to_view!(@assign tmp_value, { $( $inid: $value ),* });
         $vars.insert(stringify!($id).into(), &tmp_value);
     };
+
     ($vars:ident, $id:tt: [ $( $value:tt ),* ]) => {
         let mut tmp_value: ViewVar;
-        internal_add_to_view!(@assign tmp_value, [ $( $value ),* ]);
+        add_to_view!(@assign tmp_value, [ $( $value ),* ]);
         $vars.insert(stringify!($id).into(), &tmp_value);
     };
+
     ($vars:ident, $id:tt: $value:expr) => {
         let mut tmp_value: ViewVar;
-        internal_add_to_view!(@assign tmp_value, $value);
+        add_to_view!(@assign tmp_value, $value);
         $vars.insert(stringify!($id).into(), &tmp_value);
     };
 }

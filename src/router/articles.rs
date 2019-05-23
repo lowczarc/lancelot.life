@@ -1,4 +1,7 @@
 use std::collections::HashMap;
+use std::sync::Arc;
+use chrono::naive::NaiveDateTime;
+use mysql::{self, Pool};
 
 use lazy_static::lazy_static;
 
@@ -15,20 +18,32 @@ lazy_static! {
     pub static ref ARTICLES: Route = (Regex::new(r"/blabla/.*").unwrap(), article_route);
 }
 
-pub fn article_route(_req: Request) -> Response {
+pub fn article_route(_req: Request, db_pool: Arc<Pool>) -> Response {
     let mut res = Response::new();
     let mut vars: HashMap<String, &ViewVar> = HashMap::new();
 
-    add_to_view!(vars, articles: [
-        {
-            title: "What did you expect",
-            content: "There isn't any article here yet"
-        },
-        {
-            title: "Another useless article",
-            content: "There isn't any article here yet"
-        }
-    ]);
+    let articles: Vec<(ViewVar, ViewVar)> =
+        db_pool.prep_exec("SELECT id, titre, date, content from articles", ())
+        .map(|result| {
+            result
+                .map(|x| x.unwrap())
+                .map(|row| {
+                    let (id, titre, date, content): (i32, String, NaiveDateTime, Option<String>) = mysql::from_row(row);
+
+                    (titre.into(), content.unwrap().into())
+                }).collect()
+        }).unwrap();
+
+    let articles: Vec<HashMap<String, &ViewVar>> = articles.iter().map(|article| {
+        let mut obj: HashMap<String, &ViewVar> = HashMap::new();
+
+        obj.insert("title".into(), &article.0);
+        obj.insert("content".into(), &article.1);
+        obj
+    }).collect();
+    let articles: Vec<ViewVar> = articles.iter().map(|elem| { elem.into() }).collect();
+
+    add_to_view!(vars, articles: articles);
 
     add_to_view!(vars, section: render_view(HTML_STRUCTURE, vars.clone())); 
 

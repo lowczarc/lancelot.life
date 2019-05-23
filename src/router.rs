@@ -15,7 +15,7 @@ use crate::{
 pub mod common_struct;
 mod articles;
 
-pub type RouteFn = fn(Request) -> Response;
+pub type RouteFn = fn(Request, Arc<Pool>) -> Response;
 pub type Route = (Regex, RouteFn);
 
 lazy_static! {
@@ -27,10 +27,10 @@ lazy_static! {
   };
 }
 
-pub fn router(req: Request, _db_pool: Arc<Pool>) -> Response {
+pub fn router(req: Request, db_pool: Arc<Pool>) -> Response {
   // Determine if it's a special route or static route
   if let Some(key) = ROUTES.iter().position(|(regex, _route)| { regex.is_match(&req.location) }) {
-    ROUTES[key].1(req)
+    ROUTES[key].1(req, db_pool)
   } else {
     router_static("static", req)
   }
