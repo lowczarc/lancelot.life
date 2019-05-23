@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use std::sync::Arc;
-use chrono::naive::NaiveDateTime;
 use mysql::{self, Pool};
 
 use lazy_static::lazy_static;
@@ -23,14 +22,14 @@ pub fn article_route(_req: Request, db_pool: Arc<Pool>) -> Response {
     let mut vars: HashMap<String, &ViewVar> = HashMap::new();
 
     let articles: Vec<(ViewVar, ViewVar)> =
-        db_pool.prep_exec("SELECT id, titre, date, content from articles", ())
+        db_pool.prep_exec("SELECT titre, content from articles", ())
         .map(|result| {
             result
                 .map(|x| x.unwrap())
                 .map(|row| {
-                    let (id, titre, date, content): (i32, String, NaiveDateTime, Option<String>) = mysql::from_row(row);
+                    let (titre, content): (String, Option<String>) = mysql::from_row(row);
 
-                    (titre.into(), content.unwrap().into())
+                    (titre.into(), (if let Some(content) = content { content } else { String::new() }).into())
                 }).collect()
         }).unwrap();
 
@@ -41,6 +40,7 @@ pub fn article_route(_req: Request, db_pool: Arc<Pool>) -> Response {
         obj.insert("content".into(), &article.1);
         obj
     }).collect();
+
     let articles: Vec<ViewVar> = articles.iter().map(|elem| { elem.into() }).collect();
 
     add_to_view!(vars, articles: articles);
