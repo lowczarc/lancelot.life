@@ -14,14 +14,16 @@ use crate::{
 };
 
 lazy_static! {
-    pub static ref ARTICLES: Route = (Regex::new(r"/blabla/.*").unwrap(), article_route);
+    pub static ref ARTICLES: Route = (Regex::new(r"^/articles/(?P<article>(?P<id>[0-9]+)-(?P<name>[a-z\-]+)){0,1}$").unwrap(), article_route);
 }
 
-pub fn article_route(_req: Request, db_pool: Arc<Pool>) -> Response {
+pub fn article_route(req: Request, db_pool: Arc<Pool>) -> Response {
     let mut res = Response::new();
-    let mut vars: HashMap<String, &ViewVar> = HashMap::new();
+    let mut vars: HashMap<String, ViewVar> = HashMap::new();
+    let params = ARTICLES.0.captures_iter(&req.location).next().unwrap();
 
     add_to_view!(vars, section: all_articles::render(db_pool)); 
+
 
     add_to_view!(vars, title: "Lancelot Owczarczak");
 
