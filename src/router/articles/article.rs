@@ -26,7 +26,6 @@ pub fn render(db_pool: Arc<Pool>, params: regex::Captures) -> Result<String, Htt
         };
         let url_title = titre.chars().filter(|elem| elem.is_alphanumeric() || *elem == ' ').collect::<String>().replace(" ", "-").to_lowercase();
         if name != url_title {
-            println!("/{}/", url_title);
             return Err(HttpStatus::NotFound);
         }
 
