@@ -12,10 +12,10 @@ use crate::{
   request::Request
 };
 
-pub mod common_struct;
+pub mod common_views;
 mod articles;
 
-pub type RouteFn = fn(Request, Arc<Pool>) -> Response;
+pub type RouteFn = fn(Request, Arc<Pool>) -> Result<Response, HttpStatus>;
 pub type Route = (Regex, RouteFn);
 
 lazy_static! {
@@ -30,7 +30,10 @@ lazy_static! {
 pub fn router(req: Request, db_pool: Arc<Pool>) -> Response {
   // Determine if it's a special route or static route
   if let Some(key) = ROUTES.iter().position(|(regex, _route)| { regex.is_match(&req.location) }) {
-    ROUTES[key].1(req, db_pool)
+    match ROUTES[key].1(req, db_pool) {
+      Ok(response) => response,
+      Err(status) => common_views::default_http_status(status)
+    }
   } else {
     router_static("static", req)
   }
@@ -70,17 +73,12 @@ fn router_static(static_dir: &str, req: Request) -> Response {
         }
 
         res.raw_body(fs::read(path).expect("Failed to read static file"));
-
       } else {
-        res.status(HttpStatus::Forbidden);
-        res.header("Content-type".to_string(), "text/html".to_string());
-        res.body(format!("<!DOCTYPE html><html><body><h1>Forbidden</h1><p>You don't have permission to access {} on this server.</p></body></html>", req.location));
+        res = common_views::default_http_status(HttpStatus::Forbidden);
       }
     },
     Err(_) => {
-      res.status(HttpStatus::NotFound);
-      res.header("Content-type".to_string(), "text/html".to_string());
-      res.body(format!("<!DOCTYPE html><html><body><h1>Not Found</h1><p>The requested URL {} was not found on this server.</p></body></html>", req.location));
+      res = common_views::default_http_status(HttpStatus::NotFound);
     },
   }
 

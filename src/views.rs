@@ -5,7 +5,7 @@ pub type HtmlView = &'static[HtmlValue];
 #[macro_export]
 macro_rules! import_view {
   ($e:expr) => {{
-    use crate::views::{{HtmlValue::*, ViewContent::*}};
+    #[allow(unused)] use crate::views::{{HtmlValue::*, ViewContent::*}};
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $e, ".in")) // TODO: Remove include! and interprete views file at compile time
   }}
 }

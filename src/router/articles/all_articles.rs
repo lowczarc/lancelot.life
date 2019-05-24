@@ -17,13 +17,10 @@ pub fn render(db_pool: Arc<Pool>) -> String {
                 result
                     .map(|x| x.unwrap())
                     .map(|row| {
-                        let (titre, content): (String, Option<String>) = mysql::from_row(row);
+                        let (titre, content): (String, String) = mysql::from_row(row);
                         let mut article: HashMap<String, ViewVar> = HashMap::new();
-                        let content_cut = if let Some(content) = content {
-                                content.replace("\n", "<br/>").chars().take(MAXIMAL_PREVIEW_LENGTH).collect::<String>()
-                            } else {
-                                String::new()
-                            };
+                        let content_cut = content.replace("\n", "<br/>").chars().take(MAXIMAL_PREVIEW_LENGTH).collect::<String>();
+
                         article.insert("title".to_string(), titre.into());
                         article.insert("content".to_string(), format!("{}{}", content_cut, if content_cut.len() >= MAXIMAL_PREVIEW_LENGTH { "..." } else { "" }).into());
                         article.into()
