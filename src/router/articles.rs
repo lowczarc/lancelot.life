@@ -15,7 +15,7 @@ use crate::{
 };
 
 lazy_static! {
-    pub static ref ARTICLES: Route = (Regex::new(r"^/articles/(?P<article>(?P<id>[0-9]+)-(?P<name>[a-z\-]+)){0,1}$").unwrap(), article_route);
+    pub static ref ARTICLES: Route = (Regex::new(r"^/articles/?(?P<article>(?P<id>[0-9]+)-(?P<name>[a-z\-]+)/?){0,1}$").unwrap(), article_route);
 }
 
 pub fn article_route(req: Request, db_pool: Arc<Pool>) -> Result<Response, HttpStatus> {

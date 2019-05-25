@@ -185,7 +185,13 @@ main section article {
 	border-radius: 5px;
 }
 
-main section article + article {
+main section > a {
+	color: black;
+	text-decoration: none;
+}
+
+main section > a + a {
+	display: block;
 	margin-top: 15px;
 }
 
