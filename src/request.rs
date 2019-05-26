@@ -100,6 +100,14 @@ impl Request {
             Err(HttpStatus::BadRequest)
         }
     }
+
+    pub fn query_parse(&self) -> HashMap<&str, String> {
+        self.query.split("&").map(|elem| {
+            let mut query_splitted = elem.split("=");
+
+            (query_splitted.next().unwrap(), query_splitted.collect::<Vec<&str>>().join("=").to_string())
+        }).collect()
+    }
 }
 
 #[derive(Debug, PartialEq)]

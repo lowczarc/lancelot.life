@@ -157,16 +157,17 @@ main aside h2 {
 	margin: 5px;
 }
 
-main aside a {
-	display: block;
-
-	margin: 5px 0;
-
+main a {
 	color: #1da1f2;
 	text-decoration: none;
 }
 
-main aside a:hover {
+main aside a {
+	display: block;
+	margin: 5px 0;
+}
+
+main a:hover {
 	color: #167dbc;
 	text-decoration: underline;
 }
@@ -192,6 +193,10 @@ main section > a {
 
 main section > a + a {
 	display: block;
+	margin-top: 15px;
+}
+
+main section > article + article {
 	margin-top: 15px;
 }
 

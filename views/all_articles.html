@@ -1,13 +1,13 @@
-{articles |article| [<a href="/articles/{article.link}">
+{articles |article| [
 	<article>
 			<h2>{article.title}
 				<div id="tags">
 					{article.tags |tag| [
-						<div class="tag">{tag}</div>
+						<a class="tag" href="/articles?tag={tag}">{tag}</a>
 					]}
 				</div>
 			</h2>
 			<div>{article.content}</div>
+			<a href="/articles/{article.link}">See more</a>
 	</article>
-</a>
 ]}
