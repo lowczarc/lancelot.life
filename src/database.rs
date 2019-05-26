@@ -18,6 +18,12 @@ pub fn mysql_connection() -> Pool {
                         date datetime not null,
                         content text
             )", ()).unwrap();
-    
+
+    pool.prep_exec(r"CREATE TABLE IF NOT EXISTS tags (
+                        id int unique not null auto_increment,
+                        article_id int not null,
+                        tag varchar(255) not null
+            )", ()).unwrap();
+
     pool
 }

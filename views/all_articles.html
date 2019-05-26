@@ -1,7 +1,13 @@
 {articles |article| [<a href="/articles/{article.link}">
 	<article>
-			<h2>{article.title}</h2>
-			<p>{article.content}</p>
+			<h2>{article.title}
+				<div id="tags">
+					{article.tags |tag| [
+						<div class="tag">{tag}</div>
+					]}
+				</div>
+			</h2>
+			<div>{article.content}</div>
 	</article>
 </a>
 ]}
