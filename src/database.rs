@@ -13,17 +13,25 @@ pub fn mysql_connection() -> Pool {
     println!("Connected to MYSQL");
 
     pool.prep_exec(r"CREATE TABLE IF NOT EXISTS articles (
-                        id int unique not null auto_increment,
-                        titre varchar(255) not null,
-                        date datetime not null,
-                        content text
-            )", ()).unwrap();
+            id int unique not null auto_increment,
+            titre varchar(255) not null,
+            date datetime not null,
+            content text
+        )", ()).unwrap();
+
+    pool.prep_exec(r"CREATE TABLE IF NOT EXISTS projects (
+            id int unique not null auto_increment,
+            titre varchar(255) not null,
+            content text,
+            image text
+        )", ()).unwrap();
 
     pool.prep_exec(r"CREATE TABLE IF NOT EXISTS tags (
-                        id int unique not null auto_increment,
-                        article_id int not null,
-                        tag varchar(255) not null
-            )", ()).unwrap();
+            id int unique not null auto_increment,
+            project_id int,
+            article_id int,
+            tag varchar(255) not null
+        )", ()).unwrap();
 
     pool
 }
