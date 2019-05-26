@@ -55,7 +55,7 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
                             project.insert("tags".to_string(), tags.split(", ").map(|elem| { ViewVar::from(elem) }).collect::<Vec<ViewVar>>().into());
                         }
                         if let Some(image) = image {
-                            project.insert("image".to_string(), format!("<img alt='image' src='{}' />", image).into());
+                            project.insert("image".to_string(), format!("<img width=60 alt='image' src='{}' />", image).into());
                         }
                         if let Some(link) = links.remove(&id) {
                             project.insert("links".to_string(), link.into());
