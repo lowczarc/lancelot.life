@@ -1,0 +1,15 @@
+{projects |project| [
+	<article>
+			<h2>{project.title}
+				<div id="tags">
+					{project.tags |tag| [
+						<a class="tag" href="/projects?tag={tag}">{tag}</a>
+					]}
+				</div>
+			</h2>
+			{project.image}
+			{project.links |link| [
+				<a href="{link.href}"><img src="{link.image}"></img></a>
+			]}
+	</article>
+]}

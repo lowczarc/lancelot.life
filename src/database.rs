@@ -22,8 +22,15 @@ pub fn mysql_connection() -> Pool {
     pool.prep_exec(r"CREATE TABLE IF NOT EXISTS projects (
             id int unique not null auto_increment,
             titre varchar(255) not null,
-            content text,
+            date datetime not null,
             image text
+        )", ()).unwrap();
+
+    pool.prep_exec(r"CREATE TABLE IF NOT EXISTS links (
+            id int unique not null auto_increment,
+            project_id int not null,
+            type varchar(255) not null,
+            link text not null
         )", ()).unwrap();
 
     pool.prep_exec(r"CREATE TABLE IF NOT EXISTS tags (

@@ -10,6 +10,7 @@ macro_rules! import_view {
   }}
 }
 
+
 macro_rules! add_to_view {
     (@assign $id:ident, { $( $inid:tt: $invalue:tt ),* }) => {
         let mut tmp_object: HashMap<String, ViewVar> = HashMap::new();
@@ -18,7 +19,7 @@ macro_rules! add_to_view {
             add_to_view!(@assign tmp_value, $invalue);
             tmp_object.insert(stringify!($inid).into(), tmp_value);
         )*
-        $id = ViewVar::from(&tmp_object);
+        $id = ViewVar::from(tmp_object);
     };
 
     (@assign $id:ident, [ $( $value:tt ),* ]) => {
@@ -52,6 +53,14 @@ macro_rules! add_to_view {
         add_to_view!(@assign tmp_value, $value);
         $vars.insert(stringify!($id).into(), tmp_value);
     };
+}
+
+macro_rules! create_view_var {
+    ({ $( $inid:tt: $value:tt ),* }) => {{
+        let mut tmp_value: ViewVar;
+        add_to_view!(@assign tmp_value, { $( $inid: $value ),* });
+        tmp_value
+    }}
 }
 
 #[derive(Debug, PartialEq)]
