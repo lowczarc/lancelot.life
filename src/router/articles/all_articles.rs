@@ -12,9 +12,9 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
     let mut vars: HashMap<String, ViewVar> = HashMap::new();
 
     let db_request = if let Some(tag) = tag {
-        db_pool.prep_exec("SELECT articles.id, articles.titre, articles.content, group_concat( tags.tag SEPARATOR ', ' ) AS 'tags' FROM articles LEFT JOIN tags on tags.article_id = articles.id WHERE articles.id IN (SELECT articles.id FROM articles LEFT JOIN tags on tags.article_id = articles.id WHERE tags.tag = :tag) GROUP BY articles.id", (tag,))
+        db_pool.prep_exec("SELECT articles.id, articles.titre, articles.content, group_concat( tags.tag SEPARATOR ', ' ) AS 'tags' FROM articles LEFT JOIN tags on tags.article_id = articles.id WHERE articles.id IN (SELECT articles.id FROM articles LEFT JOIN tags on tags.article_id = articles.id WHERE tags.tag = :tag) GROUP BY articles.id ORDER BY articles.date DESC", (tag,))
     } else {
-        db_pool.prep_exec("SELECT articles.id, articles.titre, articles.content, group_concat( tags.tag SEPARATOR ', ' ) AS 'tags' FROM articles LEFT JOIN tags on tags.article_id = articles.id GROUP BY articles.id", ())
+        db_pool.prep_exec("SELECT articles.id, articles.titre, articles.content, group_concat( tags.tag SEPARATOR ', ' ) AS 'tags' FROM articles LEFT JOIN tags on tags.article_id = articles.id GROUP BY articles.id ORDER BY articles.date DESC", ())
     };
 
     let articles: Vec<ViewVar> =

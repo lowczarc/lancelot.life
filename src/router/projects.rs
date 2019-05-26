@@ -37,9 +37,9 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
         }).unwrap();
 
     let db_request = if let Some(tag) = tag {
-        db_pool.prep_exec("SELECT projects.id, projects.titre, projects.image, group_concat( tags.tag SEPARATOR ', ' ) AS 'tags' FROM projects LEFT JOIN tags on tags.project_id = projects.id WHERE projects.id IN (SELECT projects.id FROM projects LEFT JOIN tags on tags.project_id = projects.id WHERE tags.tag = :tag) GROUP BY projects.id", (tag,))
+        db_pool.prep_exec("SELECT projects.id, projects.titre, projects.image, group_concat( tags.tag SEPARATOR ', ' ) AS 'tags' FROM projects LEFT JOIN tags on tags.project_id = projects.id WHERE projects.id IN (SELECT projects.id FROM projects LEFT JOIN tags on tags.project_id = projects.id WHERE tags.tag = :tag) GROUP BY projects.id ORDER BY projects.date DESC", (tag,))
     } else {
-        db_pool.prep_exec("SELECT projects.id, projects.titre, projects.image, group_concat( tags.tag SEPARATOR ', ' ) AS 'tags' FROM projects LEFT JOIN tags on tags.project_id = projects.id GROUP BY projects.id", ())
+        db_pool.prep_exec("SELECT projects.id, projects.titre, projects.image, group_concat( tags.tag SEPARATOR ', ' ) AS 'tags' FROM projects LEFT JOIN tags on tags.project_id = projects.id GROUP BY projects.id ORDER BY projects.date DESC", ())
     };
 
     let projects: Vec<ViewVar> =
