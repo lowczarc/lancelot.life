@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub type HtmlView = &'static[HtmlValue];
+pub type HtmlView = &'static [HtmlValue];
 
 #[macro_export]
 macro_rules! import_view {
@@ -9,7 +9,6 @@ macro_rules! import_view {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $e, ".in")) // TODO: Remove include! and interprete views file at compile time
   }}
 }
-
 
 macro_rules! add_to_view {
     (@assign $id:ident, { $( $inid:tt: $invalue:tt ),* }) => {
@@ -67,7 +66,7 @@ macro_rules! create_view_var {
 pub enum ViewVar {
     Simple(String),
     Object(HashMap<String, ViewVar>),
-    Array(Vec<ViewVar>)
+    Array(Vec<ViewVar>),
 }
 
 impl<'a> From<String> for ViewVar {
@@ -106,7 +105,7 @@ pub enum ViewContent {
     Content(&'static str),
 }
 
-fn get_var_value<'a>(index: &str, vars: &HashMap<&String, &'a ViewVar>) -> Option<&'a ViewVar>{
+fn get_var_value<'a>(index: &str, vars: &HashMap<&String, &'a ViewVar>) -> Option<&'a ViewVar> {
     let mut values = index.split('.').peekable();
     let mut tmp_vars = vars;
     let mut borrow_saver;
@@ -143,20 +142,27 @@ impl HtmlValue {
             }
             HtmlValue::Value(ViewContent::Array(array, name, childrens)) => {
                 if let Some(ViewVar::Array(array)) = get_var_value(array, &vars) {
+                    return Some(
+                        array
+                            .iter()
+                            .map(|elem_var| {
+                                childrens
+                                    .iter()
+                                    .map(|elem_html| {
+                                        let added_var = name.to_string();
+                                        let mut tmp_vars = vars.clone();
+                                        tmp_vars.insert(&added_var, elem_var);
 
-                    return Some(array.iter().map(|elem_var| {
-                        childrens.iter().map(|elem_html| {
-                            let added_var = name.to_string();
-                            let mut tmp_vars = vars.clone();
-                            tmp_vars.insert(&added_var, elem_var);
-
-                            if let Some(value) = elem_html.render(tmp_vars) {
-                                value
-                            } else {
-                                String::new()
-                            }
-                        }).collect::<String>()
-                    }).collect::<String>());
+                                        if let Some(value) = elem_html.render(tmp_vars) {
+                                            value
+                                        } else {
+                                            String::new()
+                                        }
+                                    })
+                                    .collect::<String>()
+                            })
+                            .collect::<String>(),
+                    );
                 }
                 None
             }
@@ -165,9 +171,13 @@ impl HtmlValue {
 }
 
 pub fn render_view(view: HtmlView, vars: HashMap<String, ViewVar>) -> String {
-    view.iter().map(|elem| if let Some(value) = elem.render(vars.iter().collect()) {
-            value
-        } else {
-            String::new()
-        }).collect::<String>()
+    view.iter()
+        .map(|elem| {
+            if let Some(value) = elem.render(vars.iter().collect()) {
+                value
+            } else {
+                String::new()
+            }
+        })
+        .collect::<String>()
 }

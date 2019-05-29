@@ -1,4 +1,4 @@
-use std::io::{Read, BufReader, BufRead};
+use std::io::{BufRead, BufReader, Read};
 use std::net::TcpStream;
 
 use std::collections::HashMap;
@@ -19,9 +19,9 @@ pub struct Request {
 }
 
 impl Request {
-    pub fn read_request(reader: &mut BufReader<TcpStream>) -> Result<Request, HttpStatus>  {
+    pub fn read_request(reader: &mut BufReader<TcpStream>) -> Result<Request, HttpStatus> {
         if let Some(Ok(request)) = reader.lines().next() {
-            let http_request_vec : Vec<&str> = request.split(' ').collect();
+            let http_request_vec: Vec<&str> = request.split(' ').collect();
 
             if http_request_vec.len() != 3 {
                 return Err(HttpStatus::BadRequest);
@@ -37,10 +37,10 @@ impl Request {
             // Location is on the form of "/location?query"
             let mut location_splitted = http_request_vec[1].split('?');
             let location = if let Some(location) = location_splitted.next() {
-                    location.into()
-                } else {
-                    String::new()
-                };
+                location.into()
+            } else {
+                String::new()
+            };
             let query = location_splitted.collect::<Vec<&str>>().join("?");
 
             let version = http_request_vec[2].into();
@@ -61,7 +61,15 @@ impl Request {
                 // Headers are on the form of "Key: Value"
                 let line: Vec<&str> = line_str.split(':').collect();
                 if line.len() >= 2 {
-                    headers.insert(line[0].trim().into(), line.into_iter().skip(1).collect::<Vec<&str>>().join(":").trim().into());
+                    headers.insert(
+                        line[0].trim().into(),
+                        line.into_iter()
+                            .skip(1)
+                            .collect::<Vec<&str>>()
+                            .join(":")
+                            .trim()
+                            .into(),
+                    );
                 } else {
                     return Err(HttpStatus::BadRequest);
                 }
@@ -102,11 +110,17 @@ impl Request {
     }
 
     pub fn query_parse(&self) -> HashMap<&str, String> {
-        self.query.split("&").map(|elem| {
-            let mut query_splitted = elem.split("=");
+        self.query
+            .split("&")
+            .map(|elem| {
+                let mut query_splitted = elem.split("=");
 
-            (query_splitted.next().unwrap(), query_splitted.collect::<Vec<&str>>().join("=").to_string())
-        }).collect()
+                (
+                    query_splitted.next().unwrap(),
+                    query_splitted.collect::<Vec<&str>>().join("=").to_string(),
+                )
+            })
+            .collect()
     }
 }
 
@@ -123,7 +137,7 @@ impl FromStr for HttpMethod {
         match s {
             "GET" => Ok(HttpMethod::GET),
             "POST" => Ok(HttpMethod::POST),
-            _ => Err(())
+            _ => Err(()),
         }
     }
 }

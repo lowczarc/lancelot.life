@@ -1,21 +1,27 @@
 mod all_articles;
 mod article;
 
+use mysql::{self, Pool};
 use std::collections::HashMap;
 use std::sync::Arc;
-use mysql::{self, Pool};
 
 use lazy_static::lazy_static;
 
 use crate::{
     request::Request,
-    response::{Response, HttpStatus},
-    router::{Regex, Route, common_views::{STRUCT, ASIDE}},
-    views::{ViewVar, render_view},
+    response::{HttpStatus, Response},
+    router::{
+        common_views::{ASIDE, STRUCT},
+        Regex, Route,
+    },
+    views::{render_view, ViewVar},
 };
 
 lazy_static! {
-    pub static ref ARTICLES: Route = (Regex::new(r"^/articles/?(?P<article>(?P<id>[0-9]+)-(?P<name>[a-z\-]+)/?)?$").unwrap(), article_route);
+    pub static ref ARTICLES: Route = (
+        Regex::new(r"^/articles/?(?P<article>(?P<id>[0-9]+)-(?P<name>[a-z\-]+)/?)?$").unwrap(),
+        article_route
+    );
 }
 
 pub fn article_route(req: Request, db_pool: Arc<Pool>) -> Result<Response, HttpStatus> {
@@ -26,7 +32,7 @@ pub fn article_route(req: Request, db_pool: Arc<Pool>) -> Result<Response, HttpS
     if params.name("article").is_some() {
         add_to_view!(vars, section: article::render(db_pool, params)?);
     } else {
-        add_to_view!(vars, section: all_articles::render(db_pool, req.query_parse().get("tag"))); 
+        add_to_view!(vars, section: all_articles::render(db_pool, req.query_parse().get("tag")));
         add_to_view!(vars, aside: render_view(ASIDE, HashMap::new()));
     }
 

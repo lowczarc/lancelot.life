@@ -2,20 +2,20 @@ mod request;
 mod response;
 #[macro_use]
 mod views;
-mod router;
 mod database;
+mod router;
 
-use std::io::{Write, BufReader};
+use std::io::{BufReader, Write};
 use std::net::{TcpListener, TcpStream};
 use std::sync::Arc;
 use std::thread;
 
 use mysql::Pool;
 
+use database::mysql_connection;
 use request::Request;
 use response::Response;
 use router::router;
-use database::mysql_connection;
 
 const IP_LISTENER: &str = "0.0.0.0";
 const PORT_LISTENER: &str = "5432";

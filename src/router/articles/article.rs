@@ -7,7 +7,7 @@ use regex;
 
 use crate::{
     response::HttpStatus,
-    views::{HtmlView, ViewVar, render_view}
+    views::{render_view, HtmlView, ViewVar},
 };
 
 const HTML_STRUCTURE: HtmlView = import_view!("views/article.html");
