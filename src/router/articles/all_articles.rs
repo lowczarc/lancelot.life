@@ -68,5 +68,5 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
         .unwrap();
 
     add_to_view!(vars, articles: articles);
-    render_view(HTML_STRUCTURE, vars)
+    render_view(HTML_STRUCTURE, &vars)
 }

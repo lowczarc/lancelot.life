@@ -10,6 +10,7 @@ use crate::{request::Request, response::HttpStatus, response::Response};
 
 mod articles;
 pub mod common_views;
+mod goals;
 mod projects;
 
 pub type RouteFn = fn(Request, Arc<Pool>) -> Result<Response, HttpStatus>;
@@ -20,6 +21,7 @@ lazy_static! {
     let mut routes: Vec<&Route> = Vec::new();
     routes.push(&articles::ARTICLES);
     routes.push(&projects::PROJECTS);
+    routes.push(&goals::GOALS);
     // Add here all special routes
     routes
   };

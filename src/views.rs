@@ -170,7 +170,7 @@ impl HtmlValue {
     }
 }
 
-pub fn render_view(view: HtmlView, vars: HashMap<String, ViewVar>) -> String {
+pub fn render_view(view: HtmlView, vars: &HashMap<String, ViewVar>) -> String {
     view.iter()
         .map(|elem| {
             if let Some(value) = elem.render(vars.iter().collect()) {

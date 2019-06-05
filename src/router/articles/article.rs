@@ -36,5 +36,5 @@ pub fn render(db_pool: Arc<Pool>, params: regex::Captures) -> Result<String, Htt
         add_to_view!(vars, title: titre);
     }
 
-    Ok(render_view(HTML_STRUCTURE, vars))
+    Ok(render_view(HTML_STRUCTURE, &vars))
 }
