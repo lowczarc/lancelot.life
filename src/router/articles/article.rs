@@ -7,6 +7,7 @@ use regex;
 
 use crate::{
     response::HttpStatus,
+    router::common_views::{ASIDE, STRUCT},
     views::{render_view, HtmlView, ViewVar},
 };
 
@@ -36,5 +37,10 @@ pub fn render(db_pool: Arc<Pool>, params: regex::Captures) -> Result<String, Htt
         add_to_view!(vars, title: titre);
     }
 
-    Ok(render_view(HTML_STRUCTURE, &vars))
+    add_to_view!(vars, section: render_view(HTML_STRUCTURE, &vars));
+    add_to_view!(vars, aside: render_view(ASIDE, &HashMap::new()));
+
+    add_to_view!(vars, title: "Article lol - Lancelot Owczarczak");
+
+    Ok(render_view(STRUCT, &vars))
 }

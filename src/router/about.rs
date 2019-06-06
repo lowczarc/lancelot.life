@@ -1,4 +1,3 @@
-// TODO: Get goals from airtable
 use mysql::{self, Pool};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -15,27 +14,18 @@ use crate::{
     views::{render_view, HtmlView, ViewVar},
 };
 
-const HTML_STRUCTURE: HtmlView = import_view!("views/goals.html");
+const HTML_STRUCTURE: HtmlView = import_view!("views/about.html");
 
 lazy_static! {
-    pub static ref GOALS: Route = (Regex::new(r"^/goals/?$").unwrap(), goals_route);
+    pub static ref ABOUT: Route = (Regex::new(r"^/about/?$").unwrap(), about_route);
 }
 
-pub fn goals_route(_req: Request, _db_pool: Arc<Pool>) -> Result<Response, HttpStatus> {
+pub fn about_route(_req: Request, _db_pool: Arc<Pool>) -> Result<Response, HttpStatus> {
     let mut res = Response::new();
     let mut vars: HashMap<String, ViewVar> = HashMap::new();
 
-    add_to_view!(vars, title: "My Goals - Lancelot Owczarczak");
+    add_to_view!(vars, title: "About - Lancelot Owczarczak");
 
-    add_to_view!(vars, goals:
-        [
-            ">= 1 Github <b>commit</b> per day",
-            "Beautiful <b>F#2</b> to <b>G4</b> 🎺",
-            "Improve my English",
-            "Learn Lojban",
-            "Write articles"
-        ]
-    );
     add_to_view!(vars, section: render_view(HTML_STRUCTURE, &vars));
     add_to_view!(vars, aside: render_view(ASIDE, &HashMap::new()));
 

@@ -2,7 +2,10 @@ use mysql::{self, Pool};
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use crate::views::{render_view, HtmlView, ViewVar};
+use crate::{
+    router::common_views::STRUCT,
+    views::{render_view, HtmlView, ViewVar}
+};
 
 const HTML_STRUCTURE: HtmlView = import_view!("views/all_articles.html");
 
@@ -68,5 +71,7 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
         .unwrap();
 
     add_to_view!(vars, articles: articles);
-    render_view(HTML_STRUCTURE, &vars)
+    add_to_view!(vars, section: render_view(HTML_STRUCTURE, &vars));
+    add_to_view!(vars, title: "Article lol - Lancelot Owczarczak");
+    render_view(STRUCT, &vars)
 }

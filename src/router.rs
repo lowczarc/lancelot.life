@@ -12,6 +12,7 @@ mod articles;
 pub mod common_views;
 mod goals;
 mod projects;
+mod about;
 
 pub type RouteFn = fn(Request, Arc<Pool>) -> Result<Response, HttpStatus>;
 pub type Route = (Regex, RouteFn);
@@ -22,6 +23,7 @@ lazy_static! {
     routes.push(&articles::ARTICLES);
     routes.push(&projects::PROJECTS);
     routes.push(&goals::GOALS);
+    routes.push(&about::ABOUT);
     // Add here all special routes
     routes
   };

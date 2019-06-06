@@ -90,7 +90,7 @@ pub fn project_route(req: Request, db_pool: Arc<Pool>) -> Result<Response, HttpS
     add_to_view!(vars, section: render(db_pool, req.query_parse().get("tag")));
     add_to_view!(vars, aside: render_view(ASIDE, &HashMap::new()));
 
-    add_to_view!(vars, title: "Lancelot Owczarczak");
+    add_to_view!(vars, title: "My Projects - Lancelot Owczarczak");
 
     res.header("Content-Type".into(), "text/html; charset=utf8".into());
     res.body(render_view(STRUCT, &vars));

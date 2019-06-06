@@ -240,6 +240,18 @@ main section article ul li {
 	margin: 10px 0;
 }
 
+main section article #about h2 {
+	font-size: 2em;
+}
+
+main section article #about p {
+	margin: 16px 0;
+}
+
+main section article #about p.bigger {
+	font-size: 1.25rem;
+}
+
 footer {
 	display: flex;
 	justify-content: space-between;
