@@ -30,7 +30,7 @@ pub fn goals_route(_req: Request, _db_pool: Arc<Pool>) -> Result<Response, HttpS
     add_to_view!(vars, goals:
         [
             ">= 1 Github <b>commit</b> per day",
-            "Beautiful <b>F#2</b> to <b>G4</b> 🎺",
+            "Practice trumpet every day 🎺",
             "Improve my English",
             "Learn Lojban",
             "Write articles"
