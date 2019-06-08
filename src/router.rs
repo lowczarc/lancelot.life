@@ -8,11 +8,11 @@ pub use regex::Regex;
 
 use crate::{request::Request, response::HttpStatus, response::Response};
 
+mod about;
 mod articles;
 pub mod common_views;
 mod goals;
 mod projects;
-mod about;
 
 pub type RouteFn = fn(Request, Arc<Pool>) -> Result<Response, HttpStatus>;
 pub type Route = (Regex, RouteFn);

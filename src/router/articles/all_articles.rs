@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use crate::{
     router::common_views::STRUCT,
-    views::{render_view, HtmlView, ViewVar}
+    views::{render_view, HtmlView, ViewVar},
 };
 
 const HTML_STRUCTURE: HtmlView = import_view!("views/all_articles.html");

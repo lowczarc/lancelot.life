@@ -29,7 +29,6 @@ pub fn article_route(req: Request, db_pool: Arc<Pool>) -> Result<Response, HttpS
         res.body(all_articles::render(db_pool, req.query_parse().get("tag")));
     }
 
-
     res.header("Content-Type".into(), "text/html; charset=utf8".into());
 
     Ok(res)
