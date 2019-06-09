@@ -31,7 +31,7 @@ pub fn goals_route(_req: Request, _db_pool: Arc<Pool>) -> Result<Response, HttpS
         [
             ">= 1 Github <b>commit</b> per day",
             "Practice trumpet every day 🎺",
-            "Improve my English",
+            "Improve my English 🇬🇧",
             "Learn Lojban",
             "Write articles"
         ]
