@@ -17,7 +17,7 @@ use request::Request;
 use response::Response;
 use router::router;
 
-const IP_LISTENER: &str = "0.0.0.0";
+const IP_LISTENER: &str = "127.0.0.1";
 const PORT_LISTENER: &str = "5432";
 
 fn main() {
