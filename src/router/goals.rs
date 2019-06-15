@@ -1,4 +1,3 @@
-// TODO: Get goals from airtable
 use mysql::{self, Pool};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -21,21 +20,23 @@ lazy_static! {
     pub static ref GOALS: Route = (Regex::new(r"^/goals/?$").unwrap(), goals_route);
 }
 
-pub fn goals_route(_req: Request, _db_pool: Arc<Pool>) -> Result<Response, HttpStatus> {
+pub fn goals_route(_req: Request, db_pool: Arc<Pool>) -> Result<Response, HttpStatus> {
     let mut res = Response::new();
     let mut vars: HashMap<String, ViewVar> = HashMap::new();
 
     add_to_view!(vars, title: "My Goals - Lancelot Owczarczak");
 
-    add_to_view!(vars, goals:
-        [
-            ">= 1 Github <b>commit</b> per day",
-            "Practice trumpet every day 🎺",
-            "Improve my English 🇬🇧",
-            "Learn Lojban",
-            "Write articles"
-        ]
-    );
+    let goals = db_pool.prep_exec("SELECT content FROM goals", ())
+        .map(|result| {
+        result
+            .map(|x| x.unwrap())
+            .map(|row| {
+                let (content,): (String,) = mysql::from_row(row);
+                content.into()
+            }).collect::<Vec<ViewVar>>()
+        }).unwrap();
+
+    add_to_view!(vars, goals: goals);
     add_to_view!(vars, section: render_view(HTML_STRUCTURE, &vars));
     add_to_view!(vars, aside: render_view(ASIDE, &HashMap::new()));
 

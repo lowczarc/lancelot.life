@@ -69,25 +69,25 @@ pub enum ViewVar {
     Array(Vec<ViewVar>),
 }
 
-impl<'a> From<String> for ViewVar {
+impl From<String> for ViewVar {
     fn from(simple: String) -> Self {
         ViewVar::Simple(simple)
     }
 }
 
-impl<'a> From<&str> for ViewVar {
+impl From<&str> for ViewVar {
     fn from(simple: &str) -> Self {
         ViewVar::Simple(simple.into())
     }
 }
 
-impl<'a> From<HashMap<String, ViewVar>> for ViewVar {
+impl From<HashMap<String, ViewVar>> for ViewVar {
     fn from(object: HashMap<String, ViewVar>) -> Self {
         ViewVar::Object(object)
     }
 }
 
-impl<'a> From<Vec<ViewVar>> for ViewVar {
+impl From<Vec<ViewVar>> for ViewVar {
     fn from(array: Vec<ViewVar>) -> Self {
         ViewVar::Array(array)
     }
