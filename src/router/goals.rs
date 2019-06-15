@@ -26,15 +26,18 @@ pub fn goals_route(_req: Request, db_pool: Arc<Pool>) -> Result<Response, HttpSt
 
     add_to_view!(vars, title: "My Goals - Lancelot Owczarczak");
 
-    let goals = db_pool.prep_exec("SELECT content FROM goals", ())
+    let goals = db_pool
+        .prep_exec("SELECT content FROM goals", ())
         .map(|result| {
-        result
-            .map(|x| x.unwrap())
-            .map(|row| {
-                let (content,): (String,) = mysql::from_row(row);
-                content.into()
-            }).collect::<Vec<ViewVar>>()
-        }).unwrap();
+            result
+                .map(|x| x.unwrap())
+                .map(|row| {
+                    let (content,): (String,) = mysql::from_row(row);
+                    content.into()
+                })
+                .collect::<Vec<ViewVar>>()
+        })
+        .unwrap();
 
     add_to_view!(vars, goals: goals);
     add_to_view!(vars, section: render_view(HTML_STRUCTURE, &vars));
