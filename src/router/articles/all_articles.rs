@@ -72,6 +72,6 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
 
     add_to_view!(vars, articles: articles);
     add_to_view!(vars, section: render_view(HTML_STRUCTURE, &vars));
-    add_to_view!(vars, title: "Article lol - Lancelot Owczarczak");
+    add_to_view!(vars, title: "Articles - Lancelot Owczarczak");
     render_view(STRUCT, &vars)
 }

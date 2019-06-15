@@ -34,13 +34,12 @@ pub fn render(db_pool: Arc<Pool>, params: regex::Captures) -> Result<String, Htt
             add_to_view!(vars, tags: tags.split(", ").map(|elem| { ViewVar::from(elem) }).collect::<Vec<ViewVar>>());
         }
         add_to_view!(vars, content: content.replace("\n", "<br/>"));
-        add_to_view!(vars, title: titre);
+        add_to_view!(vars, title: titre.as_str());
+
+        add_to_view!(vars, section: render_view(HTML_STRUCTURE, &vars));
+        add_to_view!(vars, aside: render_view(ASIDE, &HashMap::new()));
+        add_to_view!(vars, title: format!("{} - Lancelot Owczarczak", titre.as_str()));
     }
-
-    add_to_view!(vars, section: render_view(HTML_STRUCTURE, &vars));
-    add_to_view!(vars, aside: render_view(ASIDE, &HashMap::new()));
-
-    add_to_view!(vars, title: "Article lol - Lancelot Owczarczak");
 
     Ok(render_view(STRUCT, &vars))
 }
