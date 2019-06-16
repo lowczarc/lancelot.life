@@ -57,5 +57,14 @@ pub fn mysql_connection() -> Pool {
     )
     .unwrap();
 
+    pool.prep_exec(
+        r"CREATE TABLE IF NOT EXISTS goals (
+            id int not null,
+            content text
+        )",
+        (),
+    )
+    .unwrap();
+
     pool
 }
