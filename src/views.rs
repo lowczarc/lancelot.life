@@ -141,8 +141,8 @@ impl HtmlValue {
                 }
             }
             HtmlValue::Value(ViewContent::Array(array, name, childrens)) => {
-                if let Some(ViewVar::Array(array)) = get_var_value(array, &vars) {
-                    return Some(
+                return match get_var_value(array, &vars) {
+                    Some(ViewVar::Array(array)) => Some(
                         array
                             .iter()
                             .map(|elem_var| {
@@ -162,9 +162,21 @@ impl HtmlValue {
                                     .collect::<String>()
                             })
                             .collect::<String>(),
-                    );
+                    ),
+                    Some(_) => Some(
+                        childrens
+                            .iter()
+                            .map(|elem_html| {
+                                if let Some(value) = elem_html.render(vars.clone()) {
+                                    value
+                                } else {
+                                    String::new()
+                                }
+                            })
+                            .collect::<String>(),
+                    ),
+                    None => None,
                 }
-                None
             }
         }
     }

@@ -33,7 +33,7 @@ fn compile(entry: DirEntry) -> Result<(), std::io::Error> {
         file.read_to_string(&mut contents)?;
         contents = contents.replace("\"", "\\\"");
 
-        let re = Regex::new(r"(?ms)\{(?P<v>[a-zA-Z._]+) \|(?P<e>[a-zA-Z]+)\| \[").unwrap();
+        let re = Regex::new(r"(?ms)\{(?P<v>[a-zA-Z._]+) \|(?P<e>[a-zA-Z]*)\| \[").unwrap();
         while re.is_match(&contents) {
             contents = re
                 .replace_all(&contents, "\"), Value(Array(\"$v\", \"$e\", &[Litteral(\"")

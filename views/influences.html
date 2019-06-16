@@ -1,0 +1,9 @@
+<article>
+    <h2>My Influences</h2>
+    <ul>
+        {influences |elem| [
+            <li>{elem.name}
+            {elem.link || [<a href="elem.link">[link]</a>]}</li>
+        ]}
+    </ul>
+</article>

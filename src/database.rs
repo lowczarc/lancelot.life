@@ -60,7 +60,17 @@ pub fn mysql_connection() -> Pool {
     pool.prep_exec(
         r"CREATE TABLE IF NOT EXISTS goals (
             id int not null,
-            content text
+            content text not null
+        )",
+        (),
+    )
+    .unwrap();
+
+    pool.prep_exec(
+        r"CREATE TABLE IF NOT EXISTS influences (
+            id int not null,
+            name varchar(255) not null,
+            link text
         )",
         (),
     )
