@@ -16,8 +16,11 @@ pub fn mysql_connection() -> Pool {
     pool.prep_exec(
         r"CREATE TABLE IF NOT EXISTS articles (
             id int unique not null auto_increment,
+            image varchar(255),
             titre varchar(255) not null,
             date datetime not null,
+            last_modified datetime not null,
+            public bool,
             content text
         )",
         (),
