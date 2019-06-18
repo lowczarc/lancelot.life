@@ -232,7 +232,8 @@ main section article .tag::before {
 	color: #ccc;
 }
 
-main section article p {
+main section article p.small {
+	font-size: 12px;
 }
 
 main section article ul li {
