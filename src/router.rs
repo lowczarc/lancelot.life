@@ -12,9 +12,9 @@ mod about;
 mod articles;
 pub mod common_views;
 mod goals;
+mod index;
 mod influences;
 mod projects;
-mod index;
 
 pub type RouteFn = fn(Request, Arc<Pool>) -> Result<Response, HttpStatus>;
 pub type Route = (Regex, RouteFn);
