@@ -9,7 +9,7 @@ Then lauch
 ```rust
 cargo run --release
 ```
-and the server will be listening on https://localhost:5432
+and the server will be listening on http://localhost:5432
 
 ### TODO:
 
