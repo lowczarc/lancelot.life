@@ -18,8 +18,8 @@ pub fn render(db_pool: Arc<Pool>, params: regex::Captures) -> Result<String, Htt
     let id: i32 = params.name("id").unwrap().as_str().parse().unwrap();
     let name = params.name("name").unwrap().as_str().to_string();
 
-    for result in db_pool.prep_exec("SELECT articles.id, articles.titre, articles.content, group_concat( tags.tag SEPARATOR ', ' ) AS 'tags' FROM articles LEFT JOIN tags on tags.article_id = articles.id WHERE articles.id = :id GROUP BY articles.id", (id,)) {
-        let row = result.map(|x| x.unwrap()).next();
+    if let Ok(result) = db_pool.prep_exec("SELECT articles.id, articles.titre, articles.content, group_concat( tags.tag SEPARATOR ', ' ) AS 'tags' FROM articles LEFT JOIN tags on tags.article_id = articles.id WHERE articles.id = :id GROUP BY articles.id", (id,)) {
+        let row = result.map(std::result::Result::unwrap).next();
         let (_id, titre, content, tags): (i32, String, String, Option<String>) = if let Some(row) = row {
             mysql::from_row(row)
         } else {

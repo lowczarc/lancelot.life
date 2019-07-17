@@ -17,7 +17,7 @@ use crate::{
 const HTML_STRUCTURE: HtmlView = import_view!("views/index.html");
 
 lazy_static! {
-    pub static ref INDEX: Route = (Regex::new(r"^/$").unwrap(), index_route);
+    pub static ref INDEX: Route = (Regex::new(r"^/*$").unwrap(), index_route);
 }
 
 pub fn index_route(_req: Request, _db_pool: Arc<Pool>) -> Result<Response, HttpStatus> {

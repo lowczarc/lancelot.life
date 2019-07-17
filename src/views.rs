@@ -5,7 +5,7 @@ pub type HtmlView = &'static [HtmlValue];
 #[macro_export]
 macro_rules! import_view {
   ($e:expr) => {{
-    #[allow(unused)] use crate::views::{{HtmlValue::*, ViewContent::*}};
+    use crate::views::HtmlValue::*;
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $e, ".in")) // TODO: Remove include! and interprete views file at compile time
   }}
 }
@@ -96,11 +96,6 @@ impl From<Vec<ViewVar>> for ViewVar {
 #[derive(Debug)]
 pub enum HtmlValue {
     Litteral(&'static str),
-    Value(ViewContent),
-}
-
-#[derive(Debug)]
-pub enum ViewContent {
     Array(&'static str, &'static str, &'static [HtmlValue]),
     Content(&'static str),
 }
@@ -133,51 +128,49 @@ impl HtmlValue {
     fn render(&self, vars: HashMap<&String, &ViewVar>) -> Option<String> {
         match self {
             HtmlValue::Litteral(value) => Some(value.to_string()),
-            HtmlValue::Value(ViewContent::Content(value)) => {
+            HtmlValue::Content(value) => {
                 if let Some(ViewVar::Simple(var)) = get_var_value(value, &vars) {
                     Some(var.to_string())
                 } else {
                     None
                 }
             }
-            HtmlValue::Value(ViewContent::Array(array, name, childrens)) => {
-                return match get_var_value(array, &vars) {
-                    Some(ViewVar::Array(array)) => Some(
-                        array
-                            .iter()
-                            .map(|elem_var| {
-                                childrens
-                                    .iter()
-                                    .map(|elem_html| {
-                                        let added_var = name.to_string();
-                                        let mut tmp_vars = vars.clone();
-                                        tmp_vars.insert(&added_var, elem_var);
+            HtmlValue::Array(array, name, childrens) => match get_var_value(array, &vars) {
+                Some(ViewVar::Array(array)) => Some(
+                    array
+                        .iter()
+                        .map(|elem_var| {
+                            childrens
+                                .iter()
+                                .map(|elem_html| {
+                                    let added_var = name.to_string();
+                                    let mut tmp_vars = vars.clone();
+                                    tmp_vars.insert(&added_var, elem_var);
 
-                                        if let Some(value) = elem_html.render(tmp_vars) {
-                                            value
-                                        } else {
-                                            String::new()
-                                        }
-                                    })
-                                    .collect::<String>()
-                            })
-                            .collect::<String>(),
-                    ),
-                    Some(_) => Some(
-                        childrens
-                            .iter()
-                            .map(|elem_html| {
-                                if let Some(value) = elem_html.render(vars.clone()) {
-                                    value
-                                } else {
-                                    String::new()
-                                }
-                            })
-                            .collect::<String>(),
-                    ),
-                    None => None,
-                }
-            }
+                                    if let Some(value) = elem_html.render(tmp_vars) {
+                                        value
+                                    } else {
+                                        String::new()
+                                    }
+                                })
+                                .collect::<String>()
+                        })
+                        .collect::<String>(),
+                ),
+                Some(_) => Some(
+                    childrens
+                        .iter()
+                        .map(|elem_html| {
+                            if let Some(value) = elem_html.render(vars.clone()) {
+                                value
+                            } else {
+                                String::new()
+                            }
+                        })
+                        .collect::<String>(),
+                ),
+                None => None,
+            },
         }
     }
 }

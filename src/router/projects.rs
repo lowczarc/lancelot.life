@@ -27,7 +27,7 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
     db_pool.prep_exec("SELECT projects.id, links.type, links.link FROM projects INNER JOIN links ON projects.id = links.project_id", ())
         .map(|result| {
         result
-            .map(|x| x.unwrap())
+            .map(std::result::Result::unwrap)
             .map(|row| {
                 let (id, image, link): (i32, String, String) = mysql::from_row(row);
 
@@ -48,7 +48,7 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
     let projects: Vec<ViewVar> = db_request
         .map(|result| {
             result
-                .map(|x| x.unwrap())
+                .map(std::result::Result::unwrap)
                 .map(|row| {
                     let (id, titre, image, tags): (i32, String, Option<String>, Option<String>) =
                         mysql::from_row(row);
@@ -58,7 +58,7 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
                         project.insert(
                             "tags".to_string(),
                             tags.split(", ")
-                                .map(|elem| ViewVar::from(elem))
+                                .map(ViewVar::from)
                                 .collect::<Vec<ViewVar>>()
                                 .into(),
                         );

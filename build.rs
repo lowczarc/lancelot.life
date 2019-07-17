@@ -36,19 +36,19 @@ fn compile(entry: DirEntry) -> Result<(), std::io::Error> {
         let re = Regex::new(r"(?ms)\{(?P<v>[a-zA-Z._]+) \|(?P<e>[a-zA-Z]*)\| \[").unwrap();
         while re.is_match(&contents) {
             contents = re
-                .replace_all(&contents, "\"), Value(Array(\"$v\", \"$e\", &[Litteral(\"")
+                .replace_all(&contents, "\"), Array(\"$v\", \"$e\", &[Litteral(\"")
                 .to_string();
         }
 
         let re = Regex::new(r"(?ms)\]\}").unwrap();
         while re.is_match(&contents) {
-            contents = re.replace_all(&contents, "\")])), Litteral(\"").to_string();
+            contents = re.replace_all(&contents, "\")]), Litteral(\"").to_string();
         }
 
         let re = Regex::new(r"\{(?P<v>[a-zA-Z._]+)\}").unwrap();
         while re.is_match(&contents) {
             contents = re
-                .replace_all(&contents, "\"), Value(Content(\"$v\")), Litteral(\"")
+                .replace_all(&contents, "\"), Content(\"$v\"), Litteral(\"")
                 .to_string();
         }
 

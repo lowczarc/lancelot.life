@@ -30,7 +30,7 @@ pub fn influences_route(_req: Request, db_pool: Arc<Pool>) -> Result<Response, H
         .prep_exec("SELECT name, link FROM influences", ())
         .map(|result| {
             result
-                .map(|x| x.unwrap())
+                .map(std::result::Result::unwrap)
                 .map(|row| {
                     let (name, link): (String, Option<String>) = mysql::from_row(row);
                     let mut object: HashMap<String, ViewVar> = HashMap::new();

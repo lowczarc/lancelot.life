@@ -23,7 +23,7 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
     let articles: Vec<ViewVar> = db_request
         .map(|result| {
             result
-                .map(|x| x.unwrap())
+                .map(std::result::Result::unwrap)
                 .map(|row| {
                     let (id, titre, content, tags): (i32, String, String, Option<String>) =
                         mysql::from_row(row);
@@ -44,7 +44,7 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
                         article.insert(
                             "tags".to_string(),
                             tags.split(", ")
-                                .map(|elem| ViewVar::from(elem))
+                                .map(ViewVar::from)
                                 .collect::<Vec<ViewVar>>()
                                 .into(),
                         );

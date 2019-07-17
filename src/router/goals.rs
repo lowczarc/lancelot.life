@@ -30,7 +30,7 @@ pub fn goals_route(_req: Request, db_pool: Arc<Pool>) -> Result<Response, HttpSt
         .prep_exec("SELECT content FROM goals", ())
         .map(|result| {
             result
-                .map(|x| x.unwrap())
+                .map(std::result::Result::unwrap)
                 .map(|row| {
                     let (content,): (String,) = mysql::from_row(row);
                     content.into()

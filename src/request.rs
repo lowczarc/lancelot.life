@@ -6,7 +6,7 @@ use std::str::FromStr;
 
 use crate::response::HttpStatus;
 
-const MAX_BODY_LENGTH: u64 = 500000;
+const MAX_BODY_LENGTH: u64 = 500_000;
 
 #[derive(Debug)]
 pub struct Request {
@@ -84,7 +84,7 @@ impl Request {
 
                     let mut body: Vec<u8> = Vec::new();
 
-                    if let Err(_) = reader.take(length).read_to_end(&mut body) {
+                    if reader.take(length).read_to_end(&mut body).is_err() {
                         return Err(HttpStatus::BadRequest);
                     }
                     body
@@ -111,9 +111,9 @@ impl Request {
 
     pub fn query_parse(&self) -> HashMap<&str, String> {
         self.query
-            .split("&")
+            .split('&')
             .map(|elem| {
-                let mut query_splitted = elem.split("=");
+                let mut query_splitted = elem.split('=');
 
                 (
                     query_splitted.next().unwrap(),
