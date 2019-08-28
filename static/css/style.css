@@ -15,6 +15,10 @@ body {
 	font-family: 'Lato', sans-serif;
 }
 
+#is_menu_open {
+	display: none;
+}
+
 header {
 	display: flex;
 	justify-content: space-between;
@@ -101,11 +105,11 @@ header nav div:hover:not(.disabled) {
 		transition: width 0.5s;
 	}
 
-	body.nav_open header nav {
+	#is_menu_open:checked ~ header nav {
 		width: 200px;
 	}
 
-	body.nav_open #grey {
+	#is_menu_open:checked ~ #grey {
 		position: fixed;
 		top: 0;
 		bottom: 0;
@@ -120,6 +124,10 @@ header nav div:hover:not(.disabled) {
 	header nav div {
 		margin: 20px auto;
 		white-space: nowrap;
+	}
+
+	main aside {
+		display: none;
 	}
 }
 
@@ -145,12 +153,6 @@ main aside {
 	margin: 0 10px;
 
 	text-align: center;
-}
-
-@media only screen and (max-width: 850px) {
-	main aside {
-		display: none;
-	}
 }
 
 main aside h2 {
