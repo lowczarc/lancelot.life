@@ -23,7 +23,7 @@ macro_rules! add_to_view {
 
     (@assign $id:ident, [ $( $value:tt ),* ]) => {
         let mut tmp_vec: Vec<ViewVar> = Vec::new();
-        let tmp_value: ViewVar;
+        let mut tmp_value: ViewVar;
         $(
             add_to_view!(@assign tmp_value, $value);
             tmp_vec.push(tmp_value);
@@ -185,4 +185,95 @@ pub fn render_view(view: HtmlView, vars: &HashMap<String, ViewVar>) -> String {
             }
         })
         .collect::<String>()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_var_value() {
+        let mut vars: HashMap<String, ViewVar> = HashMap::new();
+        add_to_view!(vars, var1: "test1");
+        add_to_view!(vars, var2: {
+            var1: "test2",
+            var2: [
+                "test3",
+                {
+                    var1: "test4"
+                }
+            ]
+        });
+
+        assert_eq!(
+            Some(&ViewVar::Simple("test1".to_string())),
+            get_var_value("var1", &vars.iter().collect())
+        );
+
+        assert_eq!(
+            Some(&ViewVar::Simple("test2".to_string())),
+            get_var_value("var2.var1", &vars.iter().collect())
+        );
+
+        // TODO: Add support for get_var_value for array
+        /*
+            assert_eq!(
+                Some(&ViewVar::Simple("test3".to_string())),
+                get_var_value("var2.var2[0]", &vars.iter().collect())
+            );
+
+            assert_eq!(
+                Some(&ViewVar::Simple("test4".to_string())),
+                get_var_value("var2.var2[1].var1", &vars.iter().collect())
+            );
+        */
+    }
+
+    #[test]
+    fn litteral_render() {
+        use crate::views::HtmlValue::*;
+
+        let html: HtmlView = &[Litteral("test")];
+        let vars: HashMap<String, ViewVar> = HashMap::new();
+
+        assert_eq!(render_view(html, &vars), "test".to_string());
+    }
+
+    #[test]
+    fn content_render() {
+        use crate::views::HtmlValue::*;
+
+        let html: HtmlView = &[
+            Content("content"),
+            Litteral("|"),
+            Content("object.key1"),
+            Litteral("|"),
+            Content("object.key2"),
+        ];
+        let mut vars: HashMap<String, ViewVar> = HashMap::new();
+
+        add_to_view!(vars, content: "test1");
+        add_to_view!(vars, object: { key1: "test2", key2: "test3" });
+
+        assert_eq!(render_view(html, &vars), "test1|test2|test3".to_string());
+    }
+
+    #[test]
+    fn array_render() {
+        use crate::views::HtmlValue::*;
+
+        let html: HtmlView = &[Array(
+            "array",
+            "elem",
+            &[Litteral("|"), Content("elem"), Litteral("|")],
+        )];
+        let mut vars: HashMap<String, ViewVar> = HashMap::new();
+
+        add_to_view!(vars, array: ["one", "two", "three", "four"]);
+
+        assert_eq!(
+            render_view(html, &vars),
+            "|one||two||three||four|".to_string()
+        );
+    }
 }
