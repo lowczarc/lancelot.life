@@ -40,16 +40,15 @@ impl Response {
     }
 
     pub fn send(mut self) -> Vec<u8> {
-        let mut res = format!(
-            "{} {}\n{}\n\n",
-            self.version,
-            self.status.send(),
-            self.headers
+        let mut res = format!("{} {}\n{}\n\n", self.version, self.status.send(), {
+            let mut header_vec = self
+                .headers
                 .iter()
-                .map(|(key, value)| { format!("{}: {}", key, value) })
-                .collect::<Vec<String>>()
-                .join("\n"),
-        )
+                .map(|(key, value)| format!("{}: {}", key, value))
+                .collect::<Vec<String>>();
+            header_vec.sort();
+            header_vec.join("\n")
+        },)
         .into_bytes();
         res.append(&mut self.body);
         res
@@ -76,5 +75,47 @@ impl HttpStatus {
             HttpStatus::InternalServerError => "500 Internal Server Error",
             HttpStatus::NotImplemented => "501 Not Implemented",
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn simple_response() {
+        assert_eq!(
+            Response::new().send(),
+            "HTTP/1.1 200 OK\nContent-Length: 0\n\n"
+                .to_string()
+                .into_bytes()
+        );
+    }
+
+    #[test]
+    fn response_with_body() {
+        let mut response = Response::new();
+
+        response.body("This is the body".to_string());
+
+        assert_eq!(
+            response.send(),
+            "HTTP/1.1 200 OK\nContent-Length: 16\n\nThis is the body"
+                .to_string()
+                .into_bytes()
+        );
+    }
+
+    #[test]
+    fn response_with_header() {
+        let mut response = Response::new();
+
+        response.header("Content-Type".to_string(), "text/plain".to_string());
+        assert_eq!(
+            response.send(),
+            "HTTP/1.1 200 OK\nContent-Length: 0\nContent-Type: text/plain\n\n"
+                .to_string()
+                .into_bytes()
+        );
     }
 }

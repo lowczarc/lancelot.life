@@ -203,7 +203,8 @@ mod tests {
 
     #[test]
     fn method_not_supported() {
-        let request = Request::read_request(&mut get_tests_requests("method_not_supported").unwrap());
+        let request =
+            Request::read_request(&mut get_tests_requests("method_not_supported").unwrap());
 
         assert_eq!(request, Err(HttpStatus::NotImplemented));
     }
