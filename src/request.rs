@@ -1,5 +1,4 @@
-use std::io::{BufRead, BufReader, Read};
-use std::net::TcpStream;
+use std::io::{BufRead, Read};
 
 use std::collections::HashMap;
 use std::str::FromStr;
@@ -8,7 +7,7 @@ use crate::response::HttpStatus;
 
 const MAX_BODY_LENGTH: u64 = 500_000;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Request {
     pub method: HttpMethod,
     pub location: String,
@@ -19,7 +18,7 @@ pub struct Request {
 }
 
 impl Request {
-    pub fn read_request(reader: &mut BufReader<TcpStream>) -> Result<Request, HttpStatus> {
+    pub fn read_request<R: BufRead + Read>(reader: &mut R) -> Result<Request, HttpStatus> {
         if let Some(Ok(request)) = reader.lines().next() {
             let http_request_vec: Vec<&str> = request.split(' ').collect();
 
@@ -139,5 +138,73 @@ impl FromStr for HttpMethod {
             "POST" => Ok(HttpMethod::POST),
             _ => Err(()),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs::File;
+    use std::io::BufReader;
+
+    fn get_tests_requests(request: &str) -> Result<BufReader<File>, std::io::Error> {
+        let f = File::open(format!("./tests/requests/{}", request))?;
+        Ok(BufReader::new(f))
+    }
+
+    #[test]
+    fn basic_get() {
+        let request = Request::read_request(&mut get_tests_requests("basic_get").unwrap()).unwrap();
+
+        assert_eq!(request.method, HttpMethod::GET);
+        assert_eq!(request.location, "/".to_string());
+        assert_eq!(request.query, String::new());
+        assert_eq!(request.version, "HTTP/1.1".to_string());
+        assert_eq!(request.body.len(), 0);
+        assert_eq!(request.headers.len(), 3);
+        assert_eq!(request.headers.get("Accept"), Some(&"*/*".to_string()));
+        assert_eq!(
+            request.headers.get("User-Agent"),
+            Some(&"unit-test".to_string())
+        );
+        assert_eq!(
+            request.headers.get("Host"),
+            Some(&"lancelot.life".to_string())
+        );
+    }
+
+    #[test]
+    fn post_with_body() {
+        let request =
+            Request::read_request(&mut get_tests_requests("post_with_body").unwrap()).unwrap();
+
+        assert_eq!(request.method, HttpMethod::POST);
+        assert_eq!(
+            request.headers.get("Content-Length"),
+            Some(&"16".to_string())
+        );
+        assert_eq!(request.body.len(), 16);
+        assert_eq!(request.body, "This is the body".to_string().into_bytes());
+    }
+
+    #[test]
+    fn bad_header() {
+        let request = Request::read_request(&mut get_tests_requests("bad_header").unwrap());
+
+        assert_eq!(request, Err(HttpStatus::BadRequest));
+    }
+
+    #[test]
+    fn empty_request() {
+        let request = Request::read_request(&mut get_tests_requests("empty_request").unwrap());
+
+        assert_eq!(request, Err(HttpStatus::BadRequest));
+    }
+
+    #[test]
+    fn method_not_supported() {
+        let request = Request::read_request(&mut get_tests_requests("method_not_supported").unwrap());
+
+        assert_eq!(request, Err(HttpStatus::NotImplemented));
     }
 }

@@ -11,7 +11,7 @@ pub struct Response {
 impl Response {
     pub fn new() -> Self {
         let mut headers = HashMap::new();
-        headers.insert("Content-length".to_string(), "0".to_string());
+        headers.insert("Content-Length".to_string(), "0".to_string());
 
         Self {
             status: HttpStatus::OK,
@@ -31,12 +31,12 @@ impl Response {
 
     pub fn body(&mut self, body: String) {
         self.body = body.into_bytes();
-        self.header("Content-length".to_string(), self.body.len().to_string());
+        self.header("Content-Length".to_string(), self.body.len().to_string());
     }
 
     pub fn raw_body(&mut self, body: Vec<u8>) {
         self.body = body;
-        self.header("Content-length".to_string(), self.body.len().to_string());
+        self.header("Content-Length".to_string(), self.body.len().to_string());
     }
 
     pub fn send(mut self) -> Vec<u8> {
@@ -56,7 +56,7 @@ impl Response {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum HttpStatus {
     OK = 200,
     BadRequest = 400,
