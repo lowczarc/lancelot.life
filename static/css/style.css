@@ -157,6 +157,12 @@ main aside {
 
 main aside h2 {
 	margin: 5px;
+	margin-top: 15px;
+}
+
+main aside p {
+	margin-top: 6px;
+	margin-bottom: 16px;
 }
 
 main a {
