@@ -1,10 +1,14 @@
+use lazy_static::lazy_static;
+
 use crate::{
     response::{HttpStatus, Response},
-    views::HtmlView,
+    template::{read_template, HtmlView},
 };
 
-pub const STRUCT: HtmlView = import_view!("views/common/struct.html");
-pub const ASIDE: HtmlView = import_view!("views/common/aside.html");
+lazy_static! {
+    pub static ref STRUCT: HtmlView = read_template("views/common/struct.html").unwrap();
+    pub static ref ASIDE: HtmlView = read_template("views/common/aside.html").unwrap();
+}
 
 pub fn default_http_status(status: HttpStatus) -> Response {
     let mut res = Response::new();

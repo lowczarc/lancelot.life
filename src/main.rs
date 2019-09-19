@@ -4,6 +4,7 @@ mod response;
 mod views;
 mod database;
 mod router;
+mod template;
 
 use std::io::{BufReader, Write};
 use std::net::{TcpListener, TcpStream};

@@ -1,10 +1,11 @@
 #!/bin/sh
 function build() {
-  if ~/.cargo/bin/cargo build --release
+  if ~/.cargo/bin/cargo test --release && ~/.cargo/bin/cargo build --release
   then
     mkdir -p build
     rm -rf build/*
     cp target/release/lancelot_life build/server
+    cp -r views build/
     cp -r static build/
     echo "Build success !"
   else

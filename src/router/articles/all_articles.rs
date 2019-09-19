@@ -2,14 +2,19 @@ use mysql::{self, Pool};
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use lazy_static::lazy_static;
+
 use crate::{
     router::common_views::STRUCT,
-    views::{render_view, HtmlView, ViewVar},
+    template::{read_template, HtmlView},
+    views::{render_view, ViewVar},
 };
 
-const HTML_STRUCTURE: HtmlView = import_view!("views/all_articles.html");
-
 const MAXIMAL_PREVIEW_LENGTH: usize = 75;
+
+lazy_static! {
+    pub static ref HTML_STRUCTURE: HtmlView = read_template("views/all_articles.html").unwrap();
+}
 
 pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
     let mut vars: HashMap<String, ViewVar> = HashMap::new();
@@ -71,7 +76,7 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
         .unwrap();
 
     add_to_view!(vars, articles: articles);
-    add_to_view!(vars, section: render_view(HTML_STRUCTURE, &vars));
+    add_to_view!(vars, section: render_view(&HTML_STRUCTURE, &vars));
     add_to_view!(vars, title: "Articles - Lancelot Owczarczak");
-    render_view(STRUCT, &vars)
+    render_view(&STRUCT, &vars)
 }

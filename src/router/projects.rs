@@ -11,13 +11,13 @@ use crate::{
         common_views::{ASIDE, STRUCT},
         Regex, Route,
     },
-    views::{render_view, HtmlView, ViewVar},
+    template::{read_template, HtmlView},
+    views::{render_view, ViewVar},
 };
-
-const HTML_STRUCTURE: HtmlView = import_view!("views/projects.html");
 
 lazy_static! {
     pub static ref PROJECTS: Route = (Regex::new(r"^/projects/?$").unwrap(), project_route);
+    pub static ref HTML_STRUCTURE: HtmlView = read_template("views/projects.html").unwrap();
 }
 
 pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
@@ -80,7 +80,7 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
         .unwrap();
 
     add_to_view!(vars, projects: projects);
-    render_view(HTML_STRUCTURE, &vars)
+    render_view(&HTML_STRUCTURE, &vars)
 }
 
 pub fn project_route(req: Request, db_pool: Arc<Pool>) -> Result<Response, HttpStatus> {
@@ -88,11 +88,11 @@ pub fn project_route(req: Request, db_pool: Arc<Pool>) -> Result<Response, HttpS
     let mut vars: HashMap<String, ViewVar> = HashMap::new();
 
     add_to_view!(vars, section: render(db_pool, req.query_parse().get("tag")));
-    add_to_view!(vars, aside: render_view(ASIDE, &HashMap::new()));
+    add_to_view!(vars, aside: render_view(&ASIDE, &HashMap::new()));
 
     add_to_view!(vars, title: "My Projects - Lancelot Owczarczak");
 
     res.header("Content-Type".into(), "text/html; charset=utf8".into());
-    res.body(render_view(STRUCT, &vars));
+    res.body(render_view(&STRUCT, &vars));
     Ok(res)
 }

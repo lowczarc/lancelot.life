@@ -11,13 +11,13 @@ use crate::{
         common_views::{ASIDE, STRUCT},
         Regex, Route,
     },
-    views::{render_view, HtmlView, ViewVar},
+    template::{read_template, HtmlView},
+    views::{render_view, ViewVar},
 };
-
-const HTML_STRUCTURE: HtmlView = import_view!("views/about.html");
 
 lazy_static! {
     pub static ref ABOUT: Route = (Regex::new(r"^/about/?$").unwrap(), about_route);
+    pub static ref HTML_STRUCTURE: HtmlView = read_template("views/about.html").unwrap();
 }
 
 pub fn about_route(_req: Request, _db_pool: Arc<Pool>) -> Result<Response, HttpStatus> {
@@ -26,10 +26,10 @@ pub fn about_route(_req: Request, _db_pool: Arc<Pool>) -> Result<Response, HttpS
 
     add_to_view!(vars, title: "About - Lancelot Owczarczak");
 
-    add_to_view!(vars, section: render_view(HTML_STRUCTURE, &vars));
-    add_to_view!(vars, aside: render_view(ASIDE, &HashMap::new()));
+    add_to_view!(vars, section: render_view(&HTML_STRUCTURE, &vars));
+    add_to_view!(vars, aside: render_view(&ASIDE, &HashMap::new()));
 
     res.header("Content-Type".into(), "text/html; charset=utf8".into());
-    res.body(render_view(STRUCT, &vars));
+    res.body(render_view(&STRUCT, &vars));
     Ok(res)
 }

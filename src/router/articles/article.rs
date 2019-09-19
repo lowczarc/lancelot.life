@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use lazy_static::lazy_static;
+
 use mysql::Pool;
 
 use regex;
@@ -8,10 +10,13 @@ use regex;
 use crate::{
     response::HttpStatus,
     router::common_views::{ASIDE, STRUCT},
-    views::{render_view, HtmlView, ViewVar},
+    template::{read_template, HtmlView},
+    views::{render_view, ViewVar},
 };
 
-const HTML_STRUCTURE: HtmlView = import_view!("views/article.html");
+lazy_static! {
+    pub static ref HTML_STRUCTURE: HtmlView = read_template("views/article.html").unwrap();
+}
 
 pub fn render(db_pool: Arc<Pool>, params: regex::Captures) -> Result<String, HttpStatus> {
     let mut vars: HashMap<String, ViewVar> = HashMap::new();
@@ -36,10 +41,10 @@ pub fn render(db_pool: Arc<Pool>, params: regex::Captures) -> Result<String, Htt
         add_to_view!(vars, content: content.replace("\n", "<br/>"));
         add_to_view!(vars, title: titre.as_str());
 
-        add_to_view!(vars, section: render_view(HTML_STRUCTURE, &vars));
-        add_to_view!(vars, aside: render_view(ASIDE, &HashMap::new()));
+        add_to_view!(vars, section: render_view(&HTML_STRUCTURE, &vars));
+        add_to_view!(vars, aside: render_view(&ASIDE, &HashMap::new()));
         add_to_view!(vars, title: format!("{} - Lancelot Owczarczak", titre.as_str()));
     }
 
-    Ok(render_view(STRUCT, &vars))
+    Ok(render_view(&STRUCT, &vars))
 }
