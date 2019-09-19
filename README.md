@@ -15,6 +15,5 @@ and the server will be listening on http://localhost:5432 😄
 
 - Get articles and project from airtable
 - Add TypeScript support for animations in articles
-- Remove build.rs and include! in include_view! and interprete views file at compile time
 - Add support for array in get_var_value in views.rs
 - Write articles !
