@@ -1,4 +1,4 @@
-use crate::template::{HtmlValue, HtmlView};
+use crate::template::HtmlValue;
 use std::collections::HashMap;
 
 #[macro_export]
@@ -160,7 +160,7 @@ impl HtmlValue {
     }
 }
 
-pub fn render_view(view: &HtmlView, vars: &HashMap<String, ViewVar>) -> String {
+pub fn render_view(view: &[HtmlValue], vars: &HashMap<String, ViewVar>) -> String {
     view.iter()
         .map(|elem| {
             if let Some(value) = elem.render(vars.iter().collect()) {
@@ -175,6 +175,7 @@ pub fn render_view(view: &HtmlView, vars: &HashMap<String, ViewVar>) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::template::HtmlView;
 
     #[test]
     fn test_get_var_value() {

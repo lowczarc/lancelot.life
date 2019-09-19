@@ -45,33 +45,31 @@ fn parse_content(template: &mut Chars) -> Result<HtmlValue, std::io::Error> {
                 }
                 _ => variable_name.push(c),
             }
-        } else {
-            if c == '|' {
-                c = skip_spaces(template).unwrap();
-                if c != '[' {
-                    return Err(Error::new(
-                        ErrorKind::InvalidData,
-                        format!("Unexpected '{}', expected: '['", c),
-                    ));
-                }
-
-                let sub_litteral = parse_litteral(template)?;
-                c = skip_spaces(template).unwrap();
-                if c != '}' {
-                    return Err(Error::new(
-                        ErrorKind::InvalidData,
-                        format!("Unexpected '{}', expected: '}}'", c),
-                    ));
-                }
-
-                return Ok(HtmlValue::Array(
-                    variable_name,
-                    array_iter_name,
-                    sub_litteral,
+        } else if c == '|' {
+            c = skip_spaces(template).unwrap();
+            if c != '[' {
+                return Err(Error::new(
+                    ErrorKind::InvalidData,
+                    format!("Unexpected '{}', expected: '['", c),
                 ));
-            } else {
-                array_iter_name.push(c);
             }
+
+            let sub_litteral = parse_litteral(template)?;
+            c = skip_spaces(template).unwrap();
+            if c != '}' {
+                return Err(Error::new(
+                    ErrorKind::InvalidData,
+                    format!("Unexpected '{}', expected: '}}'", c),
+                ));
+            }
+
+            return Ok(HtmlValue::Array(
+                variable_name,
+                array_iter_name,
+                sub_litteral,
+            ));
+        } else {
+            array_iter_name.push(c);
         }
     }
     Err(Error::new(
@@ -90,13 +88,13 @@ fn parse_litteral(template: &mut Chars) -> Result<Vec<HtmlValue>, std::io::Error
             escaped = true;
         } else {
             if c == '{' && !escaped {
-                if current_string.len() != 0 {
+                if !current_string.is_empty() {
                     ret.push(HtmlValue::Litteral(current_string));
                 }
                 current_string = String::new();
                 ret.push(parse_content(template)?);
             } else if c == ']' && !escaped {
-                if current_string.len() != 0 {
+                if !current_string.is_empty() {
                     ret.push(HtmlValue::Litteral(current_string));
                 }
                 return Ok(ret);
@@ -106,7 +104,7 @@ fn parse_litteral(template: &mut Chars) -> Result<Vec<HtmlValue>, std::io::Error
             escaped = false;
         }
     }
-    if current_string.len() != 0 {
+    if !current_string.is_empty() {
         ret.push(HtmlValue::Litteral(current_string));
     }
 
