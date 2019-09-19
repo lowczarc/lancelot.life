@@ -80,3 +80,13 @@ pub fn render(db_pool: Arc<Pool>, tag: Option<&String>) -> String {
     add_to_view!(vars, title: "Articles - Lancelot Owczarczak");
     render_view(&STRUCT, &vars)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_view() {
+        lazy_static::initialize(&HTML_STRUCTURE);
+    }
+}

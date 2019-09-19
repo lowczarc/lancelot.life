@@ -96,3 +96,13 @@ pub fn project_route(req: Request, db_pool: Arc<Pool>) -> Result<Response, HttpS
     res.body(render_view(&STRUCT, &vars));
     Ok(res)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_view() {
+        lazy_static::initialize(&HTML_STRUCTURE);
+    }
+}

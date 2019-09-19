@@ -35,3 +35,18 @@ pub fn default_http_status(status: HttpStatus) -> Response {
     }
     res
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_common_struct() {
+        lazy_static::initialize(&STRUCT);
+    }
+
+    #[test]
+    fn test_aside() {
+        lazy_static::initialize(&ASIDE);
+    }
+}

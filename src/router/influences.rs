@@ -53,3 +53,13 @@ pub fn influences_route(_req: Request, db_pool: Arc<Pool>) -> Result<Response, H
     res.body(render_view(&STRUCT, &vars));
     Ok(res)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_view() {
+        lazy_static::initialize(&HTML_STRUCTURE);
+    }
+}

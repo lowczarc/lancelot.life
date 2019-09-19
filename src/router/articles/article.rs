@@ -48,3 +48,13 @@ pub fn render(db_pool: Arc<Pool>, params: regex::Captures) -> Result<String, Htt
 
     Ok(render_view(&STRUCT, &vars))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_view() {
+        lazy_static::initialize(&HTML_STRUCTURE);
+    }
+}
