@@ -3,7 +3,7 @@ use std::str::Chars;
 
 pub type HtmlView = Vec<HtmlValue>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum HtmlValue {
     Litteral(String),
     Array(String, String, Vec<HtmlValue>),
@@ -90,11 +90,15 @@ fn parse_litteral(template: &mut Chars) -> Result<Vec<HtmlValue>, std::io::Error
             escaped = true;
         } else {
             if c == '{' && !escaped {
-                ret.push(HtmlValue::Litteral(current_string));
+                if current_string.len() != 0 {
+                    ret.push(HtmlValue::Litteral(current_string));
+                }
                 current_string = String::new();
                 ret.push(parse_content(template)?);
             } else if c == ']' && !escaped {
-                ret.push(HtmlValue::Litteral(current_string));
+                if current_string.len() != 0 {
+                    ret.push(HtmlValue::Litteral(current_string));
+                }
                 return Ok(ret);
             } else {
                 current_string.push(c);
@@ -102,7 +106,9 @@ fn parse_litteral(template: &mut Chars) -> Result<Vec<HtmlValue>, std::io::Error
             escaped = false;
         }
     }
-    ret.push(HtmlValue::Litteral(current_string));
+    if current_string.len() != 0 {
+        ret.push(HtmlValue::Litteral(current_string));
+    }
 
     Ok(ret)
 }
@@ -121,5 +127,66 @@ pub fn read_template(path: &str) -> Result<Vec<HtmlValue>, std::io::Error> {
         Err(Error::new(ErrorKind::InvalidData, "Unexpected ']'"))
     } else {
         Ok(ret)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use HtmlValue::*;
+
+    #[test]
+    fn only_litteral_template() {
+        let template = read_template("tests/templates/only_litteral_template").unwrap();
+
+        assert_eq!(
+            template,
+            vec![Litteral("test tata tutu [test]{test}\n".to_string())]
+        );
+    }
+
+    #[test]
+    fn litteral_content_template() {
+        let template = read_template("tests/templates/litteral_content_template").unwrap();
+
+        assert_eq!(
+            template,
+            vec![
+                Litteral("test ".to_string()),
+                Content("tata".to_string()),
+                Litteral(" test ".to_string()),
+                Content("tutu".to_string()),
+                Litteral("\n".to_string())
+            ]
+        );
+    }
+
+    #[test]
+    fn array_template() {
+        let template = read_template("tests/templates/array_template").unwrap();
+
+        assert_eq!(
+            template,
+            vec![
+                Content("test".to_string()),
+                Litteral(" ".to_string()),
+                Array(
+                    "array".to_string(),
+                    "elem".to_string(),
+                    vec![
+                        Litteral("\n\t".to_string()),
+                        Array(
+                            "elem.subarray".to_string(),
+                            "machin".to_string(),
+                            vec![Litteral("test ".to_string()), Content("tata".to_string())]
+                        ),
+                        Litteral("\n\t".to_string()),
+                        Content("test".to_string()),
+                        Litteral("\n".to_string())
+                    ]
+                ),
+                Litteral("\n".to_string()),
+            ]
+        );
     }
 }

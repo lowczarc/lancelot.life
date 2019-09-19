@@ -1,0 +1,6 @@
+{test} {array |elem| [
+	{elem.subarray |machin|
+		[test {tata}]
+	}
+	{test}
+]}
