@@ -8,7 +8,6 @@ pub use regex::Regex;
 
 use crate::{request::Request, response::HttpStatus, response::Response};
 
-mod about;
 pub mod common_views;
 mod goals;
 mod index;
@@ -21,7 +20,6 @@ lazy_static! {
   static ref ROUTES: Vec<&'static Route> = {
     let mut routes: Vec<&Route> = Vec::new();
     routes.push(&goals::GOALS);
-    routes.push(&about::ABOUT);
     routes.push(&index::INDEX);
     routes.push(&influences::INFLUENCES);
     // Add here all special routes
