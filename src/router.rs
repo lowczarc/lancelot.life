@@ -9,12 +9,10 @@ pub use regex::Regex;
 use crate::{request::Request, response::HttpStatus, response::Response};
 
 mod about;
-mod articles;
 pub mod common_views;
 mod goals;
 mod index;
 mod influences;
-mod projects;
 
 pub type RouteFn = fn(Request, Arc<Pool>) -> Result<Response, HttpStatus>;
 pub type Route = (Regex, RouteFn);
@@ -22,8 +20,6 @@ pub type Route = (Regex, RouteFn);
 lazy_static! {
   static ref ROUTES: Vec<&'static Route> = {
     let mut routes: Vec<&Route> = Vec::new();
-    routes.push(&articles::ARTICLES);
-    routes.push(&projects::PROJECTS);
     routes.push(&goals::GOALS);
     routes.push(&about::ABOUT);
     routes.push(&index::INDEX);
