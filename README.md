@@ -13,5 +13,4 @@ and the server will be listening on http://localhost:5432 😄
 
 ### TODO:
 
-- Get projects from airtable
 - Add support for array in get_var_value in views.rs
