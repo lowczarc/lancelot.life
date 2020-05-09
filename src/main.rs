@@ -22,27 +22,26 @@ const IP_LISTENER: &str = "127.0.0.1";
 const PORT_LISTENER: &str = env!("PORT");
 
 fn main() {
-    let listener = TcpListener::bind(&format!("{}:{}", IP_LISTENER, PORT_LISTENER)).unwrap();
+    let listener = TcpListener::bind(&format!("{}:{}", IP_LISTENER, PORT_LISTENER))
+        .expect("Tcp listen failed");
     let db_pool = Arc::new(mysql_connection());
 
     loop {
-        let stream = listener.accept().unwrap().0;
-        let db_pool_clone = Arc::clone(&db_pool);
-        thread::spawn(|| {
-            read_request(stream, db_pool_clone);
-        });
+        if let Ok(connection) = listener.accept() {
+            let stream = connection.0;
+            let db_pool_clone = Arc::clone(&db_pool);
+            thread::spawn(|| {
+                handle_request(stream, db_pool_clone);
+            });
+        }
     }
 }
 
-fn send_response(mut stream: TcpStream, response: &[u8]) {
-    stream.write_all(response).unwrap();
-}
-
-fn read_request(stream: TcpStream, db_pool: Arc<Pool>) {
+fn handle_request(stream: TcpStream, db_pool: Arc<Pool>) {
     let mut reader = BufReader::new(stream);
 
-    let res = match Request::read_request(&mut reader) {
-        Ok(req) => router(req, db_pool),
+    let response = match Request::read_request(&mut reader) {
+        Ok(request) => router(request, db_pool),
         Err(status) => {
             let mut res = Response::new();
 
@@ -51,5 +50,8 @@ fn read_request(stream: TcpStream, db_pool: Arc<Pool>) {
         }
     };
 
-    send_response(reader.into_inner(), &res.send());
+    let mut stream = reader.into_inner();
+    stream
+        .write_all(&response.into_bytes())
+        .expect("Failed to write response");
 }

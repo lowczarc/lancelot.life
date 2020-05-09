@@ -39,7 +39,7 @@ impl Response {
         self.header("Content-Length".to_string(), self.body.len().to_string());
     }
 
-    pub fn send(mut self) -> Vec<u8> {
+    pub fn into_bytes(mut self) -> Vec<u8> {
         let mut res = format!("{} {}\n{}\n\n", self.version, self.status.send(), {
             let mut header_vec = self
                 .headers
@@ -85,7 +85,7 @@ mod tests {
     #[test]
     fn simple_response() {
         assert_eq!(
-            Response::new().send(),
+            Response::new().into_bytes(),
             "HTTP/1.1 200 OK\nContent-Length: 0\n\n"
                 .to_string()
                 .into_bytes()
@@ -99,7 +99,7 @@ mod tests {
         response.body("This is the body".to_string());
 
         assert_eq!(
-            response.send(),
+            response.into_bytes(),
             "HTTP/1.1 200 OK\nContent-Length: 16\n\nThis is the body"
                 .to_string()
                 .into_bytes()
@@ -112,7 +112,7 @@ mod tests {
 
         response.header("Content-Type".to_string(), "text/plain".to_string());
         assert_eq!(
-            response.send(),
+            response.into_bytes(),
             "HTTP/1.1 200 OK\nContent-Length: 0\nContent-Type: text/plain\n\n"
                 .to_string()
                 .into_bytes()
