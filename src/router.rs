@@ -1,10 +1,10 @@
-use lazy_static::lazy_static;
-use mysql::Pool;
 use std::fs;
 use std::path::Path;
 use std::sync::Arc;
 
 pub use regex::Regex;
+
+use sqlx::{Pool, Postgres};
 
 use crate::{request::Request, response::HttpStatus, response::Response};
 
@@ -13,27 +13,26 @@ mod goals;
 mod index;
 mod influences;
 
-pub type RouteFn = fn(Request, Arc<Pool>) -> Result<Response, HttpStatus>;
-pub type Route = (Regex, RouteFn);
+pub type RouteFn<T> = fn(Request, Arc<T>) -> Result<Response, HttpStatus>;
+pub type Route<T> = (Regex, RouteFn<T>);
 
-lazy_static! {
-  static ref ROUTES: Vec<&'static Route> = {
-    let mut routes: Vec<&Route> = Vec::new();
+pub fn create_routes() -> Vec<&'static Route<Pool<Postgres>>> {
+    let mut routes: Vec<&Route<Pool<Postgres>>> = Vec::new();
     routes.push(&goals::GOALS);
     routes.push(&index::INDEX);
     routes.push(&influences::INFLUENCES);
     // Add here all special routes
     routes
-  };
 }
 
-pub fn router(req: Request, db_pool: Arc<Pool>) -> Response {
+pub fn router(req: Request, db_pool: Arc<Pool<Postgres>>) -> Response {
+    let routes = create_routes();
     // Determine if it's a special route or static route
-    if let Some(key) = ROUTES
+    if let Some(key) = routes
         .iter()
         .position(|(regex, _route)| regex.is_match(&req.location))
     {
-        match ROUTES[key].1(req, db_pool) {
+        match routes[key].1(req, db_pool) {
             Ok(response) => response,
             Err(status) => common_views::default_http_status(status),
         }

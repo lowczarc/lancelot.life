@@ -1,8 +1,9 @@
-use mysql::{self, Pool};
 use std::collections::HashMap;
 use std::sync::Arc;
 
 use lazy_static::lazy_static;
+
+use sqlx::{Pool, Postgres};
 
 use crate::{
     request::Request,
@@ -16,11 +17,11 @@ use crate::{
 };
 
 lazy_static! {
-    pub static ref INDEX: Route = (Regex::new(r"^/*$").unwrap(), index_route);
+    pub static ref INDEX: Route<Pool<Postgres>> = (Regex::new(r"^/*$").unwrap(), index_route);
     pub static ref HTML_STRUCTURE: HtmlView = read_template("views/index.html").unwrap();
 }
 
-pub fn index_route(_req: Request, _db_pool: Arc<Pool>) -> Result<Response, HttpStatus> {
+pub fn index_route<T>(_req: Request, _db_pool: Arc<T>) -> Result<Response, HttpStatus> {
     let mut res = Response::new();
     let mut vars: HashMap<String, ViewVar> = HashMap::new();
 

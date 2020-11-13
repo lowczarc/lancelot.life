@@ -1,3 +1,4 @@
+#![feature(async_closure)]
 mod request;
 mod response;
 #[macro_use]
@@ -11,7 +12,9 @@ use std::net::{TcpListener, TcpStream};
 use std::sync::Arc;
 use std::thread;
 
-use mysql::Pool;
+use sqlx::{Pool, Postgres};
+
+use futures::executor::block_on;
 
 use database::mysql_connection;
 use request::Request;
@@ -24,20 +27,20 @@ const PORT_LISTENER: &str = env!("PORT");
 fn main() {
     let listener = TcpListener::bind(&format!("{}:{}", IP_LISTENER, PORT_LISTENER))
         .expect("Tcp listen failed");
-    let db_pool = Arc::new(mysql_connection());
+    let db_pool = Arc::new(block_on(mysql_connection()));
 
     loop {
         if let Ok(connection) = listener.accept() {
             let stream = connection.0;
-            let db_pool_clone = Arc::clone(&db_pool);
-            thread::spawn(|| {
-                handle_request(stream, db_pool_clone);
+            let db_pool = db_pool.clone();
+            thread::spawn(move || {
+                handle_request(stream, db_pool);
             });
         }
     }
 }
 
-fn handle_request(stream: TcpStream, db_pool: Arc<Pool>) {
+fn handle_request(stream: TcpStream, db_pool: Arc<Pool<Postgres>>) {
     let mut reader = BufReader::new(stream);
 
     let response = match Request::read_request(&mut reader) {

@@ -1,36 +1,27 @@
-use mysql::Pool;
+use sqlx::postgres::PgPoolOptions;
+use sqlx::Executor;
+use sqlx::{Pool, Postgres};
 
-pub fn mysql_connection() -> Pool {
-    let pool = mysql::Pool::new(concat!(
-        "mysql://",
-        env!("MYSQL_USER"),
-        ":",
-        env!("MYSQL_PASSWORD"),
-        "@localhost:3306/",
-        env!("MYSQL_DATABASE"),
-    ))
-    .expect("Failed to connect with MYSQL");
+pub async fn mysql_connection() -> Pool<Postgres> {
+    let pool = PgPoolOptions::new()
+        .max_connections(5)
+        .connect(env!("DATABASE_URL"))
+        .await
+        .unwrap();
 
-    println!("Connected to MYSQL");
+    println!("Connected to PostgreSQL");
 
-    pool.prep_exec(
-        r"CREATE TABLE IF NOT EXISTS goals (
-            id int not null,
-            content text not null
-        )",
-        (),
-    )
-    .unwrap();
 
-    pool.prep_exec(
-        r"CREATE TABLE IF NOT EXISTS influences (
-            id int not null,
-            name varchar(255) not null,
-            link text
-        )",
-        (),
-    )
-    .unwrap();
+    pool.execute("CREATE TABLE IF NOT EXISTS goals (
+        id int not null,
+        content text not null
+    )").await.unwrap();
+
+    pool.execute("CREATE TABLE IF NOT EXISTS influences (
+        id int not null,
+        name varchar(255) not null,
+        link text
+    )").await.unwrap();
 
     pool
 }

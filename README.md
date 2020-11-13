@@ -3,13 +3,13 @@
 My personnal website written in Rust 🦀 from scratch
 
 ### Usage
-You need launch a mysql server first and define `MYSQL_USER`, `MYSQL_PASSWORD` and `MYSQL_DATABASE` environnement variables.
+You need launch a postgresql server first and define `DATABASE_URL` and `PORT` environnement variables.
 
 Then lauch
 ```rust
 cargo run --release
 ```
-and the server will be listening on http://localhost:5432 😄
+and the server will be listening on the port set in the environnement `PORT` 😄
 
 ### TODO:
 
