@@ -1,4 +1,3 @@
-#![feature(async_closure)]
 mod request;
 mod response;
 #[macro_use]
