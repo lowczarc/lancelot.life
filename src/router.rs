@@ -75,6 +75,9 @@ fn router_static(static_dir: &str, req: Request) -> Response {
                     res.header("Content-type".to_string(), content_type.to_string());
                 }
 
+                // Allow static content to be cached for an hour
+                res.header("Cache-Control".to_string(), "public, max-age=3600;".to_string());
+
                 res.raw_body(fs::read(path).expect("Failed to read static file"));
             } else {
                 res = common_views::default_http_status(HttpStatus::Forbidden);
