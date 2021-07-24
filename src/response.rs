@@ -26,7 +26,7 @@ impl Response {
 
         hasher.update(&self.body);
 
-        format!("\"{}\"", hex::encode(hasher.finalize()))
+        format!("W/\"{}\"", hex::encode(hasher.finalize()))
     }
 
     pub fn status(&mut self, status: HttpStatus) {
