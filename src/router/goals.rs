@@ -27,7 +27,7 @@ lazy_static! {
     pub static ref HTML_STRUCTURE: HtmlView = read_template("views/goals.html").unwrap();
 }
 
-pub fn goals_route(_req: Request, db_pool: Arc<Pool<Postgres>>) -> Result<Response, HttpStatus> {
+pub fn goals_route(_req: &Request, db_pool: Arc<Pool<Postgres>>) -> Result<Response, HttpStatus> {
     let mut res = Response::new();
     let mut vars: HashMap<String, ViewVar> = HashMap::new();
 

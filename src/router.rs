@@ -13,7 +13,7 @@ mod goals;
 mod index;
 mod influences;
 
-pub type RouteFn<T> = fn(Request, Arc<T>) -> Result<Response, HttpStatus>;
+pub type RouteFn<T> = fn(&Request, Arc<T>) -> Result<Response, HttpStatus>;
 pub type Route<T> = (Regex, RouteFn<T>);
 
 pub fn create_routes() -> Vec<&'static Route<Pool<Postgres>>> {
@@ -27,21 +27,37 @@ pub fn create_routes() -> Vec<&'static Route<Pool<Postgres>>> {
 
 pub fn router(req: Request, db_pool: Arc<Pool<Postgres>>) -> Response {
     let routes = create_routes();
+
     // Determine if it's a special route or static route
-    if let Some(key) = routes
+    let mut response = if let Some(key) = routes
         .iter()
         .position(|(regex, _route)| regex.is_match(&req.location))
     {
-        match routes[key].1(req, db_pool) {
+        match routes[key].1(&req, db_pool) {
             Ok(response) => response,
             Err(status) => common_views::default_http_status(status),
         }
     } else {
-        router_static("static", req)
+        router_static("static", &req)
+    };
+
+    // Generate the ETag for caching resources
+    let res_etag = response.etag();
+
+    // Check if the client has the same ETag as the server and send a 304
+    if let Some(req_etag) = req.headers.get("If-None-Match") {
+        if req_etag.eq(&res_etag) {
+            response.raw_body(Vec::new());
+            response.status(HttpStatus::NotModified);
+        }
     }
+
+    response.header("ETag".to_string(), res_etag);
+
+    response
 }
 
-fn router_static(static_dir: &str, req: Request) -> Response {
+fn router_static(static_dir: &str, req: &Request) -> Response {
     let mut res = Response::new();
     let mut current_path = Path::new(&format!("./{}/{}", static_dir, req.location)).canonicalize();
 
@@ -76,7 +92,10 @@ fn router_static(static_dir: &str, req: Request) -> Response {
                 }
 
                 // Allow static content to be cached for an hour
-                res.header("Cache-Control".to_string(), "public, max-age=3600;".to_string());
+                res.header(
+                    "Cache-Control".to_string(),
+                    "public, max-age=3600;".to_string(),
+                );
 
                 res.raw_body(fs::read(path).expect("Failed to read static file"));
             } else {

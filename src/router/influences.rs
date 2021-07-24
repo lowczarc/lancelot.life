@@ -30,7 +30,7 @@ struct Influence {
 }
 
 pub fn influences_route(
-    _req: Request,
+    _req: &Request,
     db_pool: Arc<Pool<Postgres>>,
 ) -> Result<Response, HttpStatus> {
     let mut res = Response::new();

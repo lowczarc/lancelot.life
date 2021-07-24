@@ -1,5 +1,8 @@
 use std::collections::HashMap;
 
+use hex;
+use md5::{Digest, Md5};
+
 #[derive(Debug)]
 pub struct Response {
     status: HttpStatus,
@@ -10,15 +13,20 @@ pub struct Response {
 
 impl Response {
     pub fn new() -> Self {
-        let mut headers = HashMap::new();
-        headers.insert("Content-Length".to_string(), "0".to_string());
-
         Self {
             status: HttpStatus::OK,
             version: "HTTP/1.1".to_string(),
-            headers,
+            headers: HashMap::new(),
             body: Vec::new(),
         }
+    }
+
+    pub fn etag(&self) -> String {
+        let mut hasher = Md5::new();
+
+        hasher.update(&self.body);
+
+        format!("\"{}\"", hex::encode(hasher.finalize()))
     }
 
     pub fn status(&mut self, status: HttpStatus) {
@@ -31,15 +39,15 @@ impl Response {
 
     pub fn body(&mut self, body: String) {
         self.body = body.into_bytes();
-        self.header("Content-Length".to_string(), self.body.len().to_string());
     }
 
     pub fn raw_body(&mut self, body: Vec<u8>) {
         self.body = body;
-        self.header("Content-Length".to_string(), self.body.len().to_string());
     }
 
     pub fn into_bytes(mut self) -> Vec<u8> {
+        self.header("Content-Length".to_string(), self.body.len().to_string());
+
         let mut res = format!("{} {}\n{}\n\n", self.version, self.status.send(), {
             let mut header_vec = self
                 .headers
@@ -58,6 +66,7 @@ impl Response {
 #[derive(Debug, PartialEq)]
 pub enum HttpStatus {
     OK = 200,
+    NotModified = 304,
     BadRequest = 400,
     Forbidden = 403,
     NotFound = 404,
@@ -69,6 +78,7 @@ impl HttpStatus {
     pub fn send(&self) -> &str {
         match self {
             HttpStatus::OK => "200 OK",
+            HttpStatus::NotModified => "304 Not Modified",
             HttpStatus::BadRequest => "400 Bad Request",
             HttpStatus::Forbidden => "403 Forbidden",
             HttpStatus::NotFound => "404 Not Found",

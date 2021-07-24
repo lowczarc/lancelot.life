@@ -21,7 +21,7 @@ lazy_static! {
     pub static ref HTML_STRUCTURE: HtmlView = read_template("views/index.html").unwrap();
 }
 
-pub fn index_route<T>(_req: Request, _db_pool: Arc<T>) -> Result<Response, HttpStatus> {
+pub fn index_route<T>(_req: &Request, _db_pool: Arc<T>) -> Result<Response, HttpStatus> {
     let mut res = Response::new();
     let mut vars: HashMap<String, ViewVar> = HashMap::new();
 
