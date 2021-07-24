@@ -45,7 +45,7 @@ pub fn router(req: Request, db_pool: Arc<Pool<Postgres>>) -> Response {
     let res_etag = response.etag();
 
     // Check if the client has the same ETag as the server and send a 304
-    if let Some(req_etag) = req.headers.get("If-None-Match") {
+    if let Some(req_etag) = req.headers.get("if-none-match") {
         if req_etag.eq(&res_etag) {
             response.raw_body(Vec::new());
             response.status(HttpStatus::NotModified);
@@ -88,7 +88,7 @@ fn router_static(static_dir: &str, req: &Request) -> Response {
                 };
 
                 if content_type != "" {
-                    res.header("Content-type".to_string(), content_type.to_string());
+                    res.header("Content-Type".to_string(), content_type.to_string());
                 }
 
                 // Allow static content to be cached for an hour

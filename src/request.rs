@@ -61,7 +61,7 @@ impl Request {
                 let line: Vec<&str> = line_str.split(':').collect();
                 if line.len() >= 2 {
                     headers.insert(
-                        line[0].trim().into(),
+                        line[0].trim().to_string().to_ascii_lowercase(),
                         line.into_iter()
                             .skip(1)
                             .collect::<Vec<&str>>()
@@ -75,7 +75,7 @@ impl Request {
             }
 
             // Read a body of Content-Length bytes if Content-Length is defined and method is not GET
-            let body = if let Some(content_length) = headers.get("Content-Length") {
+            let body = if let Some(content_length) = headers.get("content-length") {
                 if let Ok(length) = content_length.parse() {
                     if length > MAX_BODY_LENGTH || method == HttpMethod::GET {
                         return Err(HttpStatus::BadRequest);
@@ -162,13 +162,13 @@ mod tests {
         assert_eq!(request.version, "HTTP/1.1".to_string());
         assert_eq!(request.body.len(), 0);
         assert_eq!(request.headers.len(), 3);
-        assert_eq!(request.headers.get("Accept"), Some(&"*/*".to_string()));
+        assert_eq!(request.headers.get("accept"), Some(&"*/*".to_string()));
         assert_eq!(
-            request.headers.get("User-Agent"),
+            request.headers.get("user-agent"),
             Some(&"unit-test".to_string())
         );
         assert_eq!(
-            request.headers.get("Host"),
+            request.headers.get("host"),
             Some(&"lancelot.life".to_string())
         );
     }
@@ -180,7 +180,7 @@ mod tests {
 
         assert_eq!(request.method, HttpMethod::POST);
         assert_eq!(
-            request.headers.get("Content-Length"),
+            request.headers.get("content-length"),
             Some(&"16".to_string())
         );
         assert_eq!(request.body.len(), 16);
