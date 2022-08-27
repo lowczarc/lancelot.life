@@ -218,7 +218,7 @@ footer {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	color: #ccc;
+	color: #aaa;
 
 	padding: 20px 50px;
 
@@ -227,6 +227,31 @@ footer {
 
 footer p {
 	cursor: default;
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  8% {
+    transform: scale(1.2);
+  }
+  16% {
+    transform: scale(1);
+  }
+  24% {
+    transform: scale(1.4);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+footer p #love {
+	display: inline-block;
 }
 
 footer p:hover #love {
@@ -240,7 +265,7 @@ footer a {
 footer .icon {
 	width: 30px;
 
-	fill: #ccc;
+	fill: #aaa;
 	cursor: pointer;
 }
 

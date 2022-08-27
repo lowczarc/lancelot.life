@@ -12,6 +12,7 @@ pub mod common_views;
 mod goals;
 mod index;
 mod influences;
+pub mod utils;
 
 pub type RouteFn<T> = fn(&Request, Arc<T>) -> Result<Response, HttpStatus>;
 pub type Route<T> = (Regex, RouteFn<T>);
