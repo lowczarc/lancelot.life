@@ -276,3 +276,7 @@ footer .icon#twitter:hover {
 footer .icon#github:hover {
 	fill: black;
 }
+
+footer .icon#mastodon:hover {
+	fill: #7975ff;
+}
