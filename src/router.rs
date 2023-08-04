@@ -9,9 +9,7 @@ use sqlx::{Pool, Postgres};
 use crate::{request::Request, response::HttpStatus, response::Response};
 
 pub mod common_views;
-mod goals;
 mod index;
-mod influences;
 pub mod utils;
 
 pub type RouteFn<T> = fn(&Request, Arc<T>) -> Result<Response, HttpStatus>;
@@ -19,9 +17,7 @@ pub type Route<T> = (Regex, RouteFn<T>);
 
 pub fn create_routes() -> Vec<&'static Route<Pool<Postgres>>> {
     let mut routes: Vec<&Route<Pool<Postgres>>> = Vec::new();
-    routes.push(&goals::GOALS);
     routes.push(&index::INDEX);
-    routes.push(&influences::INFLUENCES);
     // Add here all special routes
     routes
 }

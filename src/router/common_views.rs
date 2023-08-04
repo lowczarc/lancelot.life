@@ -1,14 +1,6 @@
-use lazy_static::lazy_static;
-
 use crate::{
     response::{HttpStatus, Response},
-    template::{read_template, HtmlView},
 };
-
-lazy_static! {
-    pub static ref STRUCT: HtmlView = read_template("views/common/struct.html").unwrap();
-    pub static ref ASIDE: HtmlView = read_template("views/common/aside.html").unwrap();
-}
 
 pub fn default_http_status(status: HttpStatus) -> Response {
     let mut res = Response::new();
@@ -34,19 +26,4 @@ pub fn default_http_status(status: HttpStatus) -> Response {
         }
     }
     res
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_common_struct() {
-        lazy_static::initialize(&STRUCT);
-    }
-
-    #[test]
-    fn test_aside() {
-        lazy_static::initialize(&ASIDE);
-    }
 }
