@@ -1,13 +1,13 @@
 [package]
 name = "lancelot_life"
 version = "0.1.0"
-authors = ["Lancelot OWCZARCZAK <lowczarc@student.42.fr>"]
+authors = ["Lancelot OWCZARCZAK <lancelot@owczarczak.fr>"]
 edition = "2018"
 
 [dependencies]
-regex = "1.6.0"
+regex = "1.9.3"
 lazy_static = "1.4.0"
-sqlx = { version = "0.6.1", features = [ "runtime-async-std-native-tls", "postgres", "time" ] }
-futures = "0.3.23"
+sqlx = { version = "0.7.1", features = [ "runtime-async-std-native-tls", "postgres", "time" ] }
+futures = "0.3.28"
 hex = "0.4.3"
-md-5 = "0.10.1"
+md-5 = "0.10.5"
