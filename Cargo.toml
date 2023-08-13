@@ -7,7 +7,7 @@ edition = "2018"
 [dependencies]
 regex = "1.6.0"
 lazy_static = "1.4.0"
-sqlx = { version = "0.6.1", features = [ "runtime-async-std-native-tls", "postgres" ] }
+sqlx = { version = "0.6.1", features = [ "runtime-async-std-native-tls", "postgres", "time" ] }
 futures = "0.3.23"
 hex = "0.4.3"
 md-5 = "0.10.1"

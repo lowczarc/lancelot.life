@@ -54,7 +54,7 @@ macro_rules! create_view_var {
     }}
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum ViewVar {
     Simple(String),
     Object(HashMap<String, ViewVar>),

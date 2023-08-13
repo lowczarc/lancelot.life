@@ -132,3 +132,11 @@ footer p #love {
 	display: inline-block;
 	color: #A53C23;
 }
+
+table {
+	width: 100%;
+}
+
+table thead th {
+	text-align: left;
+}

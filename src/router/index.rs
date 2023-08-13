@@ -8,9 +8,12 @@ use sqlx::{Pool, Postgres};
 use crate::{
     request::Request,
     response::{HttpStatus, Response},
-    router::{utils::initial_vars, Regex, Route},
+    router::{
+        utils::{initial_vars, render_in_common_view},
+        Regex, Route,
+    },
     template::{read_template, HtmlView},
-    views::{render_view, ViewVar},
+    views::ViewVar,
 };
 
 lazy_static! {
@@ -20,10 +23,12 @@ lazy_static! {
 
 pub fn index_route(_req: &Request, db_pool: Arc<Pool<Postgres>>) -> Result<Response, HttpStatus> {
     let mut res = Response::new();
-    let vars: HashMap<String, ViewVar> = initial_vars(db_pool.clone());
+    let mut vars: HashMap<String, ViewVar> = initial_vars(db_pool.clone());
+
+    add_to_view!(vars, title: "Lancelot Owczarczak");
 
     res.header("Content-Type".into(), "text/html; charset=utf8".into());
-    res.body(render_view(&HTML_STRUCTURE, &vars));
+    res.body(render_in_common_view(&HTML_STRUCTURE, &vars));
     Ok(res)
 }
 

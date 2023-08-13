@@ -1,11 +1,14 @@
-use std::sync::Arc;
 use std::collections::HashMap;
+use std::sync::Arc;
+
+use lazy_static::lazy_static;
 
 use futures::executor::block_on;
 
 use sqlx::{self, Pool, Postgres};
 
-use crate::views::ViewVar;
+use crate::template::{read_template, HtmlView};
+use crate::views::{render_view, ViewVar};
 
 struct HeartBeat {
     heart_rate: Option<f64>,
@@ -32,4 +35,16 @@ pub fn initial_vars(db_pool: Arc<Pool<Postgres>>) -> HashMap<String, ViewVar> {
     );
 
     vars
+}
+
+lazy_static! {
+    pub static ref COMMON_STRUCTURE: HtmlView = read_template("views/common.html").unwrap();
+}
+
+pub fn render_in_common_view(view: &HtmlView, vars: &HashMap<String, ViewVar>) -> String {
+    let mut common_vars = vars.clone();
+
+    add_to_view!(common_vars, page: render_view(view, vars));
+
+    render_view(&COMMON_STRUCTURE, &common_vars)
 }
