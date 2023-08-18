@@ -1,11 +1,11 @@
 :root {
 	--bg: #151515;
-	--primary: #808080;
-	--primary-soft: #606060;
+	--primary: #CDCDCB;
+	--primary-soft: #847D7D;
 	--primary-bold: #F5F5F5;
-	--secondary: #547C99;
-	--secondary-soft: #9F4E85;
-	--secondary-bold: #6C99BB;
+	--secondary: #72A7E9;
+	--secondary-soft: #D188D7;
+	--secondary-bold: #8CB8ED;
 }
 
 html {
@@ -130,7 +130,7 @@ footer a {
 
 footer p #love {
 	display: inline-block;
-	color: #A53C23;
+	color: #FF5961;
 }
 
 table {
