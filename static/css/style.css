@@ -2,6 +2,7 @@
 	--bg: #151515;
 	--primary: #CDCDCB;
 	--primary-soft: #847D7D;
+	--primary-softer: #424040;
 	--primary-bold: #F5F5F5;
 	--secondary: #72A7E9;
 	--secondary-soft: #D188D7;
@@ -139,4 +140,10 @@ table {
 
 table thead th {
 	text-align: left;
+}
+
+table, th, td {
+  border: 2px dashed var(--primary-softer);
+	padding: 5px 10px;
+	border-collapse: collapse
 }
