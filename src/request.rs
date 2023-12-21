@@ -123,7 +123,7 @@ impl Request {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum HttpMethod {
     GET,
     POST,

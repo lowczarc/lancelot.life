@@ -44,9 +44,10 @@ fn handle_request(stream: TcpStream, db_pool: Arc<Pool<Postgres>>) {
 
     let response = match Request::read_request(&mut reader) {
         Ok(request) => {
+            let method = request.method;
             let mut res = router(request, db_pool);
 
-            if request.method == HttpMethod::HEAD {
+            if method == HttpMethod::HEAD {
                 res.head = true;
             }
 
