@@ -5,6 +5,7 @@ use md5::{Digest, Md5};
 
 #[derive(Debug)]
 pub struct Response {
+    pub head: bool,
     status: HttpStatus,
     version: String,
     headers: HashMap<String, String>,
@@ -14,6 +15,7 @@ pub struct Response {
 impl Response {
     pub fn new() -> Self {
         Self {
+            head: false,
             status: HttpStatus::OK,
             version: "HTTP/1.1".to_string(),
             headers: HashMap::new(),
@@ -58,7 +60,10 @@ impl Response {
             header_vec.join("\n")
         },)
         .into_bytes();
-        res.append(&mut self.body);
+
+        if !self.head {
+            res.append(&mut self.body);
+        }
         res
     }
 }

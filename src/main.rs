@@ -16,7 +16,7 @@ use sqlx::{Pool, Postgres};
 use futures::executor::block_on;
 
 use database::mysql_connection;
-use request::Request;
+use request::{HttpMethod, Request};
 use response::Response;
 use router::router;
 
@@ -43,7 +43,15 @@ fn handle_request(stream: TcpStream, db_pool: Arc<Pool<Postgres>>) {
     let mut reader = BufReader::new(stream);
 
     let response = match Request::read_request(&mut reader) {
-        Ok(request) => router(request, db_pool),
+        Ok(request) => {
+            let mut res = router(request, db_pool);
+
+            if request.method == HttpMethod::HEAD {
+                res.head = true;
+            }
+
+            res
+        }
         Err(status) => {
             let mut res = Response::new();
 

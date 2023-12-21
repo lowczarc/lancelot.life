@@ -127,6 +127,7 @@ impl Request {
 pub enum HttpMethod {
     GET,
     POST,
+    HEAD,
 }
 
 impl FromStr for HttpMethod {
@@ -136,6 +137,7 @@ impl FromStr for HttpMethod {
         match s {
             "GET" => Ok(HttpMethod::GET),
             "POST" => Ok(HttpMethod::POST),
+            "HEAD" => Ok(HttpMethod::HEAD),
             _ => Err(()),
         }
     }
