@@ -20,8 +20,8 @@ use crate::{
 
 lazy_static! {
     pub static ref INDEX: Route<Pool<Postgres>> =
-        (Regex::new(r"^/rambles/*$").unwrap(), index_route);
-    pub static ref HTML_STRUCTURE: HtmlView = read_template("views/rambles.html").unwrap();
+        (Regex::new(r"^/misc/*$").unwrap(), index_route);
+    pub static ref HTML_STRUCTURE: HtmlView = read_template("views/misc.html").unwrap();
 }
 
 struct Ramble {
