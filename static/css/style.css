@@ -106,20 +106,20 @@ li::before {
 	border-bottom: 1px solid var(--primary);
 }
 
-footer {
+footer, blockquote {
 	color: var(--primary-soft);
 	margin-top: 20px;
 }
 
-footer p {
+footer p, blockquote p {
 	margin: 0;
 }
 
-footer p::before {
+footer p::before, blockquote p::before {
 	content: "> ";
 }
 
-footer a {
+footer a, blockquote a {
 	color: var(--primary-soft);
 	border-bottom: 1px solid var(--primary-soft);
 }
