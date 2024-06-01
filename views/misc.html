@@ -1,16 +1,15 @@
-        <p>Just a collection of things I want to share but would not fit on <a href="https://blog.lancelot.life">Blog</a> or <a href="https://hachyderm.io/@zerevo">Mastodon</a>.</p>
-        <table class="rambles" style="table-layout: auto">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Published Date</th>
-                </tr>
-            </thead>
-            <tbody>{rambles |ramble| [
-                <tr>
-                    <td><a href="{ramble.link}">{ramble.title}</a></td>
-                    <td style="width: 211px">{ramble.published_date}</td>
-                </tr>]}
-            </tbody>
-        </table>
-        
+		<p>Just a collection of things I want to share but would not fit on <a href="https://blog.lancelot.life">Blog</a> or <a href="https://hachyderm.io/@zerevo">Mastodon</a>.</p>
+		<table class="rambles" style="table-layout: auto">
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Published Date</th>
+				</tr>
+			</thead>
+			<tbody>{rambles |ramble| [
+				<tr>
+					<td><a href="{ramble.link}">{ramble.title}</a></td>
+					<td style="width: 211px">{ramble.published_date}</td>
+				</tr>]}
+			</tbody>
+		</table>
