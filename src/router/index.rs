@@ -25,7 +25,7 @@ pub fn index_route(_req: &Request, db_pool: Arc<Pool<Postgres>>) -> Result<Respo
     let mut res = Response::new();
     let mut vars: HashMap<String, ViewVar> = initial_vars(db_pool.clone());
 
-    add_to_view!(vars, title: "LO");
+    add_to_view!(vars, title: "About Me");
 
     res.header("Content-Type".into(), "text/html; charset=utf8".into());
     res.body(render_in_common_view(&HTML_STRUCTURE, &vars));
