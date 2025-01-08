@@ -34,7 +34,7 @@ pub fn index_route(_req: &Request, db_pool: Arc<Pool<Postgres>>) -> Result<Respo
     let mut res = Response::new();
     let mut vars: HashMap<String, ViewVar> = initial_vars(db_pool.clone());
 
-    add_to_view!(vars, title: "Lancelot Owczarczak - Misc");
+    add_to_view!(vars, title: "LO - Misc");
 
     let rambles = block_on(
         sqlx::query_as!(Ramble, "SELECT title, link, published_date FROM rambles ORDER BY published_date DESC")
